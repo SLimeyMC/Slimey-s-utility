@@ -27,6 +27,7 @@ import org.valkyrienskies.mod.common.util.toMinecraft
 import java.awt.Color
 import java.lang.Math.*
 
+
 class ShipAssemblerItem(properties: Properties): Item(properties) {
 
     var firstPosition: BlockPos? = null

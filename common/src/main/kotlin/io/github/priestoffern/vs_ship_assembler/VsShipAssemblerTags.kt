@@ -8,7 +8,8 @@ import net.minecraft.world.level.block.Block
 
 object VsShipAssemblerTags {
 
-    val FORBIDDEN_ASSEMBLE: TagKey<Block> = TagKey.create(
+    @kotlin.jvm.JvmField
+    var FORBIDDEN_ASSEMBLE: TagKey<Block> = TagKey.create(
         Registry.BLOCK_REGISTRY,
         ResourceLocation(VsShipAssemblerMod.MOD_ID, "forbidden_assemble")
     )

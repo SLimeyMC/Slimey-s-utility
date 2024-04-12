@@ -93,11 +93,11 @@ object PhysicUtility {
         return pos2
     }
 
-    fun assembleToContraption(level: Level, blocks: List<BlockPos>, removeOriginal: Boolean, scale: Double): Boolean {
+    fun assembleToContraption(level: Level, blocks: List<BlockPos>, removeOriginal: Boolean, scale: Double): Ship? {
         assert(level is ServerLevel) { "Can't manage contraptions on client side!" }
         val sLevel: ServerLevel = level as ServerLevel
         if (blocks.isEmpty()) {
-            return false
+            return null
         }
 
         var structureCornerMin: BlockPos = blocks[0]
@@ -112,7 +112,7 @@ object PhysicUtility {
                 hasSolids = true
             }
         }
-        if (!hasSolids) return false
+        if (!hasSolids) return null
 
         // Create new contraption at center of bounds
         val contraptionWorldPos: Vec3d = GeneralUtility.getMiddle(structureCornerMin, structureCornerMax)
@@ -155,7 +155,7 @@ object PhysicUtility {
         if (contraption != null) {
             teleportContraption(level as ServerLevel, contraption as ServerShip, contraptionPosition, true)
         }
-        return true
+        return contraption
     }
 
 
