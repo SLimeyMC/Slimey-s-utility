@@ -1,7 +1,7 @@
 package io.github.priestoffern.vs_ship_assembler.util
 
-import de.m_marvin.univec.impl.Vec3d
-import de.m_marvin.univec.impl.Vec3i
+
+import com.mojang.math.Vector3d
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.ticks.ScheduledTick
+import org.joml.Vector3i
 
 private val AIR = Blocks.AIR.defaultBlockState()
 object GeneralUtility {
@@ -79,11 +80,11 @@ object GeneralUtility {
         return BlockPos(Mth.floor(x), Math.floor(y).toInt(), Math.floor(z).toInt())
     }
 
-    fun toBlockPos(vec: Vec3d): BlockPos {
+    fun toBlockPos(vec: Vector3d): BlockPos {
         return toBlockPos(vec.x, vec.y, vec.z)
     }
 
-    fun getVecDirection(v: Vec3i): Direction {
+    fun getVecDirection(v: Vector3i): Direction {
         var axis = Direction.Axis.X
         if (v.y() != 0) axis = Direction.Axis.Y
         if (v.z() != 0) axis = Direction.Axis.Z
@@ -110,36 +111,36 @@ object GeneralUtility {
 
 
 
-    fun getMiddle(pos1: BlockPos, pos2: BlockPos): Vec3d {
+    fun getMiddle(pos1: BlockPos, pos2: BlockPos): Vector3i {
         val middleX = Math.min(pos1.x, pos2.x).toDouble() + (Math.max(pos1.x, pos2.x) - Math.min(
             pos1.x,
             pos2.x
-        ) + 1).toDouble() / 2.0
+        ) + 1) / 2
         val middleY = Math.min(pos1.y, pos2.y).toDouble() + (Math.max(pos1.y, pos2.y) - Math.min(
             pos1.y,
             pos2.y
-        ) + 1).toDouble() / 2.0
+        ) + 1) / 2
         val middleZ = Math.min(pos1.z, pos2.z).toDouble() + (Math.max(pos1.z, pos2.z) - Math.min(
             pos1.z,
             pos2.z
-        ) + 1).toDouble() / 2.0
-        return Vec3d(middleX, middleY, middleZ)
+        ) + 1) / 2
+        return Vector3i(middleX.toInt(), middleY.toInt(), middleZ.toInt())
     }
 
-    fun getMiddle(pos1: Vec3d, pos2: Vec3d): Vec3d {
-        val middleX = Math.min(pos1.getX(), pos2.getX()) + (Math.max(pos1.getX(), pos2.getX()) - Math.min(
-            pos1.getX(),
-            pos2.getX()
+    fun getMiddle(pos1: Vector3d, pos2: Vector3d): Vector3d {
+        val middleX = Math.min(pos1.x, pos2.x) + (Math.max(pos1.x, pos2.x) - Math.min(
+            pos1.x,
+            pos2.x
         )) / 2.0
-        val middleY = Math.min(pos1.getY(), pos2.getY()) + (Math.max(pos1.getY(), pos2.getY()) - Math.min(
-            pos1.getY(),
-            pos2.getY()
+        val middleY = Math.min(pos1.y, pos2.y) + (Math.max(pos1.y, pos2.y) - Math.min(
+            pos1.y,
+            pos2.y
         )) / 2.0
-        val middleZ = Math.min(pos1.getZ(), pos2.getZ()) + (Math.max(pos1.getZ(), pos2.getZ()) - Math.min(
-            pos1.getZ(),
-            pos2.getZ()
+        val middleZ = Math.min(pos1.z, pos2.z) + (Math.max(pos1.z, pos2.z) - Math.min(
+            pos1.z,
+            pos2.z
         )) / 2.0
-        return Vec3d(middleX, middleY, middleZ)
+        return Vector3d(middleX, middleY, middleZ)
     }
     
 
