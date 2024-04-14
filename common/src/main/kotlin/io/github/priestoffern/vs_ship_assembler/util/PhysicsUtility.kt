@@ -141,7 +141,7 @@ fun assembleToContraption(level: Level, blocks: List<BlockPos>, removeOriginal: 
     }
 
     // Set the final position gain, since the contraption moves slightly if blocks are added
-    teleportContraption(level as ServerLevel, contraption as ServerShip, contraptionPosition)
+    teleportContraption(level, contraption as ServerShip, contraptionPosition)
 
     return contraption
 }
