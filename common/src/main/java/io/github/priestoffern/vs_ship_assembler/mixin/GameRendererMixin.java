@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static io.github.priestoffern.vs_ship_assembler.rendering.RendererKt.renderData;
+import static io.github.priestoffern.vs_ship_assembler.rendering.RenderDataKt.renderData;
 
 
 @Mixin(GameRenderer.class)

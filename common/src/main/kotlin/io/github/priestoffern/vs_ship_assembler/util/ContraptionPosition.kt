@@ -64,15 +64,16 @@ class ContraptionPosition {
     constructor(contraption: ServerShip, useGeometricCenter: Boolean) : this(contraption) {
         if (useGeometricCenter) {
             val shipBounds = contraption.shipAABB
-            val shipCoordCenter: Vec3d = GeneralUtility.getMiddle(
-                Vec3d(shipBounds!!.minX().toDouble(), shipBounds.minY().toDouble(), shipBounds.minZ().toDouble()), Vec3d(
-                    shipBounds!!.maxX().toDouble(), shipBounds.maxY().toDouble(), shipBounds.maxZ().toDouble()
+            val shipCoordCenter: Vec3d = getMiddle(
+                Vec3d(shipBounds!!.minX().toDouble(), shipBounds.minY().toDouble(), shipBounds.minZ().toDouble()),
+                Vec3d(
+                    shipBounds.maxX().toDouble(), shipBounds.maxY().toDouble(), shipBounds.maxZ().toDouble()
                 )
             )
             val shipCoordMassCenter: Vec3d =
                 Vec3d.fromVec(contraption.inertiaData.centerOfMassInShip).add(Vec3d(0.5, 0.5, 0.5))
-            val centerOfMassOffset: Vec3d = PhysicUtility.toWorldPos(contraption.transform, shipCoordMassCenter)
-                .sub(PhysicUtility.toWorldPos(contraption.transform, shipCoordCenter))
+            val centerOfMassOffset: Vec3d = toWorldPos(contraption.transform, shipCoordMassCenter)
+                .sub(toWorldPos(contraption.transform, shipCoordCenter))
             position.subI(centerOfMassOffset)
         }
     }
@@ -81,23 +82,24 @@ class ContraptionPosition {
         position.GetOrientation(),
         position.GetPosition(),
         if (position.dimension.isPresent) position.dimension.get() else null,
-        if (position.velocity.isPresent()) position.velocity.get() else null,
-        if (position.omega.isPresent()) position.omega.get() else null,
+        if (position.velocity.isPresent) position.velocity.get() else null,
+        if (position.omega.isPresent) position.omega.get() else null,
         if (position.scale.isPresent) position.scale.get() else null
     )
 
     fun toTeleport(contraption: ServerShip, useGeometricCenter: Boolean): ShipTeleportData {
         if (useGeometricCenter) {
             val shipBounds = contraption.shipAABB
-            val shipCoordCenter: Vec3d = GeneralUtility.getMiddle(
-                Vec3d(shipBounds!!.minX().toDouble(), shipBounds.minY().toDouble(), shipBounds.minZ().toDouble()), Vec3d(
-                    shipBounds!!.maxX().toDouble(), shipBounds.maxY().toDouble(), shipBounds.maxZ().toDouble()
+            val shipCoordCenter: Vec3d = getMiddle(
+                Vec3d(shipBounds!!.minX().toDouble(), shipBounds.minY().toDouble(), shipBounds.minZ().toDouble()),
+                Vec3d(
+                    shipBounds.maxX().toDouble(), shipBounds.maxY().toDouble(), shipBounds.maxZ().toDouble()
                 )
             )
             val shipCoordMassCenter: Vec3d =
                 Vec3d.fromVec(contraption.inertiaData.centerOfMassInShip).add(Vec3d(0.5, 0.5, 0.5))
-            val centerOfMassOffset: Vec3d = PhysicUtility.toWorldPos(contraption.transform, shipCoordMassCenter)
-                .sub(PhysicUtility.toWorldPos(contraption.transform, shipCoordCenter))
+            val centerOfMassOffset: Vec3d = toWorldPos(contraption.transform, shipCoordMassCenter)
+                .sub(toWorldPos(contraption.transform, shipCoordCenter))
             val temp = ContraptionPosition(this)
             temp.GetPosition().addI(centerOfMassOffset)
             return temp.toTeleport()
@@ -109,8 +111,8 @@ class ContraptionPosition {
         return ShipTeleportDataImpl(
             positionJOML,
             orientationJOML,
-            if (velocity.isPresent()) velocity.get().writeTo(Vector3d()) else Vector3d(),
-            if (omega.isPresent()) omega.get().writeTo(Vector3d()) else Vector3d(),
+            if (velocity.isPresent) velocity.get().writeTo(Vector3d()) else Vector3d(),
+            if (omega.isPresent) omega.get().writeTo(Vector3d()) else Vector3d(),
             if (dimension.isPresent) dimension.get() else null,
             if (scale.isPresent) scale.get() else null
         )
@@ -118,10 +120,10 @@ class ContraptionPosition {
 
     fun toWorldPosition(transform: ShipTransform) {
         val quat = transform.shipToWorldRotation
-        orientation = Quaterniond(quat.x().toDouble(), quat.y().toDouble(), quat.z().toDouble(), quat.w().toDouble()).mul(
+        orientation = Quaterniond(quat.x(), quat.y(), quat.z(), quat.w()).mul(
             orientation
         )
-        position = PhysicUtility.toWorldPos(transform, position)
+        position = toWorldPos(transform, position)
     }
 
     fun GetOrientation(): Quaterniond {
