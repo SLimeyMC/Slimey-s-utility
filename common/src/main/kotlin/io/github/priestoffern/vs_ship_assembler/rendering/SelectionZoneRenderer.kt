@@ -4,24 +4,19 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
 import com.mojang.math.Matrix4f
 import de.m_marvin.univec.impl.Vec3d
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec
 import net.minecraft.client.Camera
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GameRenderer
-import net.minecraft.client.renderer.RenderType
-import org.joml.Vector3d
 import org.lwjgl.opengl.GL11
 import java.awt.Color
-class SelectionZoneRenderer() : RenderingData {
-    var point0 = Vec3d();
-    var point1 = Vec3d();
+class SelectionZoneRenderer(override var id: Long) : RenderingData {
+    var point0 = Vec3d()
+    var point1 = Vec3d()
     var color: Color = Color(0)
-    override var Id: Long = 0;
     constructor(
                 point0: Vec3d,
                 point1: Vec3d,
                 color: Color,
-    ): this() {
+    ): this(0) {
         this.point0 = point0
         this.point1 = point1
         this.color = color

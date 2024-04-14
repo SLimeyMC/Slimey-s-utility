@@ -8,21 +8,12 @@ import net.minecraft.client.Minecraft
 
 import org.valkyrienskies.mod.common.shipObjectWorld
 
-
-fun renderData(poseStack: PoseStack, camera: Camera) {
-
-    for (data in Renderer.toRender) {
-        if (data!=null) data.renderData(poseStack, camera)
-
-    }
-}
-
 object Renderer {
     var CurrentId:Long = 0;
     val toRender = mutableListOf<RenderingData>()
 
     fun addRender(renderData: RenderingData): RenderingData {
-        renderData.Id = CurrentId;
+        renderData.id = CurrentId;
         CurrentId++
 
         toRender.add(renderData);
@@ -35,7 +26,4 @@ object Renderer {
 }
 
 
-interface RenderingData {
-    var Id: Long;
-    fun renderData(poseStack: PoseStack, camera: Camera)
-}
+
