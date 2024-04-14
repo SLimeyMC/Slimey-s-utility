@@ -9,19 +9,13 @@ import net.minecraft.world.item.ItemStack
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import io.github.priestoffern.vs_ship_assembler.items.ShipAssemblerItem
+import net.minecraft.world.item.CreativeModeTab.TAB_MISC
 
 object VsShipAssemblerItems {
     val ITEMS = DeferredRegister.create(VsShipAssemblerMod.MOD_ID, Registry.ITEM_REGISTRY)
-    val TAB: CreativeModeTab = CreativeTabRegistry.create(
-        ResourceLocation(
-            VsShipAssemblerMod.MOD_ID,
-            "vs_ship_assembler_tab"
-        )
-    ) {ItemStack(SHIP_ASSEMBLER.get())}
-
 
     var SHIP_ASSEMBLER: RegistrySupplier<Item> = ITEMS.register("ship_assembler") { ShipAssemblerItem(Item.Properties().tab(
-        TAB
+        TAB_MISC
     ).stacksTo(1)) }
     fun register() {
         ITEMS.register()
