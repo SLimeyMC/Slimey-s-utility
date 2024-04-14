@@ -5,7 +5,7 @@ import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerTags
 import io.github.priestoffern.vs_ship_assembler.rendering.Renderer
 import io.github.priestoffern.vs_ship_assembler.rendering.RenderingData
 import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
-import io.github.priestoffern.vs_ship_assembler.util.PhysicUtility
+import io.github.priestoffern.vs_ship_assembler.util.*
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.TextComponent
@@ -105,7 +105,7 @@ class ShipAssemblerItem(properties: Properties): Item(properties) {
                 }
 
                 if (set.size>0) {
-                    PhysicUtility.assembleToContraption(level,set,true,1.0)
+                    assembleToContraption(level,set,true,1.0)
                     player.sendMessage(TextComponent("Assembled!"), Util.NIL_UUID)
                 } else {
                     player.sendMessage(TextComponent("Failed to Assemble: Empty ship"), Util.NIL_UUID)
