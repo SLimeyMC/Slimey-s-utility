@@ -1,6 +1,6 @@
 package io.github.priestoffern.vs_ship_assembler.items
 
-import de.m_marvin.univec.impl.Vec3d
+
 import io.github.priestoffern.vs_ship_assembler.rendering.Renderer
 import io.github.priestoffern.vs_ship_assembler.rendering.RenderingData
 import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
@@ -91,8 +91,9 @@ class ShipAssemblerItem(properties: Properties): Item(properties) {
                     if (SelectionZone!=null) Renderer.removeRenderOfType(SelectionZone!!)
                     SelectionZone = null;
 
-                    val SZ = SelectionZoneRenderer(Vec3d(firstPosition!!.x.toDouble(),
-                        firstPosition!!.y.toDouble(), firstPosition!!.z.toDouble()),Vec3d(res.blockPos.x.toDouble(),res.blockPos.y.toDouble(),res.blockPos.z.toDouble()), Color.GREEN);
+                    val SZ = SelectionZoneRenderer(Vector3d(firstPosition!!.x.toDouble(),
+                        firstPosition!!.y.toDouble(), firstPosition!!.z.toDouble()),
+                        Vector3d(res.blockPos.x.toDouble(),res.blockPos.y.toDouble(),res.blockPos.z.toDouble()), Color.GREEN);
                     SelectionZone = Renderer.addRender(SZ)
                 } else {
                     player.sendMessage(TextComponent("Selected position is invalid").withStyle(ChatFormatting.RED), Util.NIL_UUID)
@@ -140,11 +141,11 @@ class ShipAssemblerItem(properties: Properties): Item(properties) {
 
 
                 val SZ = SelectionZoneRenderer(
-                    Vec3d(
+                    Vector3d(
                         otherPos!!.x.toDouble(),
                         otherPos.y.toDouble(), otherPos.z.toDouble()
                     ),
-                    Vec3d(res.blockPos.x.toDouble(), res.blockPos.y.toDouble(), res.blockPos.z.toDouble()),
+                    Vector3d(res.blockPos.x.toDouble(), res.blockPos.y.toDouble(), res.blockPos.z.toDouble()),
                     Color.GREEN
                 );
                 SelectionZone = Renderer.addRender(SZ)
