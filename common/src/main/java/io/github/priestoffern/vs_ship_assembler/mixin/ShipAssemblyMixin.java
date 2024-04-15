@@ -2,9 +2,7 @@ package io.github.priestoffern.vs_ship_assembler.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,9 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet;
 import org.valkyrienskies.mod.common.assembly.ShipAssemblyKt;
-
-import java.util.Collection;
-import java.util.List;
 
 import static io.github.priestoffern.vs_ship_assembler.util.PhysicsUtilityKt.assembleToContraption;
 
@@ -26,11 +21,13 @@ public final class ShipAssemblyMixin {
     // and create duplication glitch on create stuff
     @Inject(method = "createNewShipWithBlocks", at = @At("HEAD"), cancellable = true)
     private static void onCreateNewShipWithBlocks(@NotNull BlockPos centerBlock, @NotNull DenseBlockPosSet blocks, @NotNull ServerLevel level, CallbackInfoReturnable<ServerShip> cir) {
-        List<BlockPos> blockList = List.of(blocks.stream()
-                .filter(vec -> level.getBlockState(new BlockPos(vec.x(), vec.y(), vec.z()))
-                        .getTags().noneMatch(tag -> tag.equals(VsShipAssemblerTags.FORBIDDEN_ASSEMBLE)))
-                .map(vec -> new BlockPos(vec.x(), vec.y(), vec.z()))
-                .toArray(BlockPos[]::new));
-        cir.setReturnValue((ServerShip) assembleToContraption(level, blockList, true, 1.0));
+        DenseBlockPosSet newBlocks = new DenseBlockPosSet();
+        blocks.forEach(pos -> {
+            if (level.getBlockState(new BlockPos(pos.x(), pos.y(), pos.z()))
+                    .getTags().noneMatch(tag -> tag.equals(VsShipAssemblerTags.FORBIDDEN_ASSEMBLE))) {
+                newBlocks.add(pos);
+            }
+        });
+        cir.setReturnValue((ServerShip) assembleToContraption(level, newBlocks, true, 1.0));
     }
 }

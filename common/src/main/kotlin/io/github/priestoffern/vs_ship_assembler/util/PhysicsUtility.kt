@@ -8,10 +8,14 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
+import org.joml.Math.*
 import org.joml.Vector3d
+import org.joml.Vector3ic
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipTransform
+import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
+import org.valkyrienskies.core.util.*
 import org.valkyrienskies.mod.common.BlockStateInfo.onSetBlock
 import org.valkyrienskies.mod.common.dimensionId
 import org.valkyrienskies.mod.common.getShipManagingPos
@@ -50,10 +54,6 @@ fun triggerBlockChange(level: Level?, pos: BlockPos?, prevState: BlockState?, ne
     onSetBlock(level!!, pos!!, prevState!!, newState!!)
 }
 
-fun isSolidContraptionBlock(): Boolean {
-    return true
-}
-
 fun createContraptionAt(level: Level, contraptionPosition: ContraptionPosition, scale: Double): BlockPos {
     assert(level is ServerLevel) { "Can't manage contraptions on client side!" }
 
@@ -84,26 +84,27 @@ fun createContraptionAt(level: Level, contraptionPosition: ContraptionPosition, 
     return pos2
 }
 
-fun assembleToContraption(level: Level, blocks: List<BlockPos>, removeOriginal: Boolean, scale: Double): Ship? {
+fun assembleToContraption(level: Level, blocks: DenseBlockPosSet, removeOriginal: Boolean, scale: Double): Ship? {
     assert(level is ServerLevel) { "Can't manage contraptions on client side!" }
     val sLevel: ServerLevel = level as ServerLevel
     if (blocks.isEmpty()) {
         return null
     }
 
-    var structureCornerMin: BlockPos = blocks[0]
-    var structureCornerMax: BlockPos = blocks[0]
-    var hasSolids = false
-
-    // Calculate bounds of the area containing all blocks adn check for solids and invalid blocks
-    for (itPos in blocks) {
-        if (isSolidContraptionBlock()) {
-            structureCornerMin = getMinCorner(structureCornerMin, itPos)
-            structureCornerMax = getMaxCorner(structureCornerMax, itPos)
-            hasSolids = true
-        }
+    var structureCornerMin: BlockPos = BlockPos(Int.MAX_VALUE, Int.MAX_VALUE, Int.MAX_VALUE)
+    var structureCornerMax: BlockPos = BlockPos(Int.MIN_VALUE, Int.MIN_VALUE, Int.MIN_VALUE)
+    blocks.forEach {pos ->
+        structureCornerMin = BlockPos(
+            min(structureCornerMax.x, pos.x),
+            min(structureCornerMax.y, pos.y),
+            min(structureCornerMax.z, pos.z)
+        )
+        structureCornerMax = BlockPos(
+            max(structureCornerMax.x, pos.x),
+            max(structureCornerMax.y, pos.y),
+            max(structureCornerMax.z, pos.z)
+        )
     }
-    if (!hasSolids) return null
 
     // Create new contraption at center of bounds
     val contraptionWorldPos: Vec3d = getMiddle(structureCornerMin, structureCornerMax)
@@ -113,10 +114,10 @@ fun assembleToContraption(level: Level, blocks: List<BlockPos>, removeOriginal: 
 
     // Copy blocks and check if the center block got replaced (is default a stone block)
     var centerBlockReplaced = false
-    for (itPos in blocks) {
-        val relative: BlockPos = itPos.subtract(toBlockPos(contraptionWorldPos))
+    blocks.forEach {pos ->
+        val relative: BlockPos = BlockPos(pos).subtract(toBlockPos(contraptionWorldPos))
         val shipPos: BlockPos = contraptionBlockPos.offset(relative)
-        copyBlock(level, itPos, shipPos)
+        copyBlock(level, BlockPos(pos), shipPos)
         if (relative == BlockPos.ZERO) centerBlockReplaced = true
     }
 
@@ -127,16 +128,16 @@ fun assembleToContraption(level: Level, blocks: List<BlockPos>, removeOriginal: 
 
     // Remove original blocks
     if (removeOriginal) {
-        for (itPos in blocks) {
-            removeBlock(level, itPos)
+        blocks.forEach {pos ->
+            removeBlock(level, BlockPos(pos))
         }
     }
 
     // Trigger updates on both contraptions
-    for (itPos in blocks) {
-        val relative: BlockPos = itPos.subtract(toBlockPos(contraptionWorldPos))
+    blocks.forEach {pos ->
+        val relative: BlockPos = BlockPos(pos).subtract(toBlockPos(contraptionWorldPos))
         val shipPos: BlockPos = contraptionBlockPos.offset(relative)
-        triggerUpdate(level, itPos)
+        triggerUpdate(level, BlockPos(pos))
         triggerUpdate(level, shipPos)
     }
 
@@ -144,4 +145,8 @@ fun assembleToContraption(level: Level, blocks: List<BlockPos>, removeOriginal: 
     teleportContraption(level, contraption as ServerShip, contraptionPosition)
 
     return contraption
+}
+
+fun BlockPos(vector: Vector3ic): BlockPos {
+    return BlockPos(vector.x, vector.y, vector.z)
 }
