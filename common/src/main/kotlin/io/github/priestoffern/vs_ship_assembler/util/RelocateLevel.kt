@@ -17,23 +17,23 @@ class RelocateLevel {
         this.level = level
     }
 
-    fun setBlock(pos: BlockPos, state: BlockState?) {
+    fun setBlock(pos: BlockPos, state: BlockState) {
         val chunk = level.getChunk(pos) as LevelChunk
         val section = chunk.getSection(chunk.getSectionIndex(pos.y))
         val oldState = level.getBlockState(pos)
         section.setBlockState(pos.x and 15, pos.y and 15, pos.z and 15, state)
-        triggerBlockChange(level, pos, oldState, state)
+        triggerBlockChange(pos, oldState, state)
     }
 
     fun removeBlock(pos: BlockPos) {
         level.removeBlockEntity(pos)
-        setBlock(level, pos, Blocks.AIR.defaultBlockState())
+        setBlock(pos, Blocks.AIR.defaultBlockState())
     }
 
     fun copyBlock(from: BlockPos, to: BlockPos) {
         val state = level.getBlockState(from)
         val blockentity = level.getBlockEntity(from)
-        setBlock(level, to, state)
+        setBlock(to, state)
 
         // Transfer pending schedule-ticks
         if (level.blockTicks.hasScheduledTick(from, state.block)) {
