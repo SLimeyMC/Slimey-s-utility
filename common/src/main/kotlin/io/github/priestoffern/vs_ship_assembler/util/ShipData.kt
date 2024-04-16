@@ -10,7 +10,7 @@ import org.valkyrienskies.core.impl.game.ShipTeleportDataImpl
 import java.util.*
 
 
-class ShipPosition {
+class ShipData {
     var orientation: Quaterniond
     var position: Vector3d
     var dimension: Optional<String>
@@ -68,7 +68,7 @@ class ShipPosition {
         }
     }
 
-    constructor(position: ShipPosition) : this(
+    constructor(position: ShipData) : this(
         position.getOrientation(),
         position.getPosition(),
         if (position.dimension.isPresent) position.dimension.get() else null,
@@ -86,7 +86,7 @@ class ShipPosition {
                 Vector3d(ship.inertiaData.centerOfMassInShip).add(Vector3d(0.5))
             val centerOfMassOffset: Vector3d = transformPosition(ship.transform, shipCoordMassCenter)
                 .sub(transformPosition(ship.transform, shipCoordBoundCenter))
-            val temp = ShipPosition(this)
+            val temp = ShipData(this)
             temp.getPosition().add(centerOfMassOffset)
             return temp.toTeleport()
         }
