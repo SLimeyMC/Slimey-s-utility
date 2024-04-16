@@ -1,10 +1,7 @@
 package io.github.priestoffern.vs_ship_assembler.util
 
 
-import org.joml.Quaterniond
-import org.joml.Quaterniondc
-import org.joml.Vector3d
-import org.joml.Vector3dc
+import org.joml.*
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.api.ships.properties.ShipTransform
