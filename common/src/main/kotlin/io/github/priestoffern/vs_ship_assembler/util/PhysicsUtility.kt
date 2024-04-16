@@ -93,16 +93,16 @@ fun assembleToContraption(level: Level, blocks: DenseBlockPosSet, removeOriginal
 
     var structureCornerMin: BlockPos = BlockPos(Int.MAX_VALUE, Int.MAX_VALUE, Int.MAX_VALUE)
     var structureCornerMax: BlockPos = BlockPos(Int.MIN_VALUE, Int.MIN_VALUE, Int.MIN_VALUE)
-    blocks.forEach {pos ->
+    blocks.forEach {x, y, z ->
         structureCornerMin = BlockPos(
-            min(structureCornerMax.x, pos.x),
-            min(structureCornerMax.y, pos.y),
-            min(structureCornerMax.z, pos.z)
+            min(structureCornerMax.x, x),
+            min(structureCornerMax.y, y),
+            min(structureCornerMax.z, z)
         )
         structureCornerMax = BlockPos(
-            max(structureCornerMax.x, pos.x),
-            max(structureCornerMax.y, pos.y),
-            max(structureCornerMax.z, pos.z)
+            max(structureCornerMax.x, x),
+            max(structureCornerMax.y, y),
+            max(structureCornerMax.z, z)
         )
     }
 
@@ -114,10 +114,10 @@ fun assembleToContraption(level: Level, blocks: DenseBlockPosSet, removeOriginal
 
     // Copy blocks and check if the center block got replaced (is default a stone block)
     var centerBlockReplaced = false
-    blocks.forEach {pos ->
-        val relative: BlockPos = BlockPos(pos).subtract(toBlockPos(contraptionWorldPos))
+    blocks.forEach {x, y, z ->
+        val relative: BlockPos = BlockPos(x, y, z).subtract(toBlockPos(contraptionWorldPos))
         val shipPos: BlockPos = contraptionBlockPos.offset(relative)
-        copyBlock(level, BlockPos(pos), shipPos)
+        copyBlock(level, BlockPos(x, y, z), shipPos)
         if (relative == BlockPos.ZERO) centerBlockReplaced = true
     }
 
@@ -128,16 +128,16 @@ fun assembleToContraption(level: Level, blocks: DenseBlockPosSet, removeOriginal
 
     // Remove original blocks
     if (removeOriginal) {
-        blocks.forEach {pos ->
-            removeBlock(level, BlockPos(pos))
+        blocks.forEach {x, y, z ->
+            removeBlock(level, BlockPos(x, y, z))
         }
     }
 
     // Trigger updates on both contraptions
-    blocks.forEach {pos ->
-        val relative: BlockPos = BlockPos(pos).subtract(toBlockPos(contraptionWorldPos))
+    blocks.forEach {x, y, z ->
+        val relative: BlockPos = BlockPos(x, y, z).subtract(toBlockPos(contraptionWorldPos))
         val shipPos: BlockPos = contraptionBlockPos.offset(relative)
-        triggerUpdate(level, BlockPos(pos))
+        triggerUpdate(level, BlockPos(x, y, z))
         triggerUpdate(level, shipPos)
     }
 
@@ -145,8 +145,4 @@ fun assembleToContraption(level: Level, blocks: DenseBlockPosSet, removeOriginal
     teleportContraption(level, contraption as ServerShip, contraptionPosition)
 
     return contraption
-}
-
-fun BlockPos(vector: Vector3ic): BlockPos {
-    return BlockPos(vector.x, vector.y, vector.z)
 }

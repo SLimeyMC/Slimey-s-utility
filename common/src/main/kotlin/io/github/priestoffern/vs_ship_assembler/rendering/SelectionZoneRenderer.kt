@@ -68,6 +68,9 @@ class SelectionZoneRenderer(override var id: Long) : RenderingData {
                     r: Int, g: Int, b: Int, a: Int, lightmapUV: Int,
                     A: Vec3d, B:Vec3d
     ) {
+        val addVertex = { x: Double, y: Double, z: Double ->
+            buf.vertex(matrix, x.toFloat(), y.toFloat(), z.toFloat()).color(r, g, b, a).uv2(lightmapUV).endVertex()
+        }
         buf.vertex(matrix,  tof(A.x), tof(A.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
         buf.vertex(matrix,  tof(A.x), tof(A.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
 
