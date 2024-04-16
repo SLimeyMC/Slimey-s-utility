@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.ticks.ScheduledTick
+import org.valkyrienskies.mod.common.BlockStateInfo
 
 class RelocateLevel {
     val level: Level
@@ -29,7 +30,7 @@ class RelocateLevel {
         setBlock(level, pos, Blocks.AIR.defaultBlockState())
     }
 
-    fun copyBlock(from: BlockPos?, to: BlockPos) {
+    fun copyBlock(from: BlockPos, to: BlockPos) {
         val state = level.getBlockState(from)
         val blockentity = level.getBlockEntity(from)
         setBlock(level, to, state)
@@ -48,9 +49,13 @@ class RelocateLevel {
         }
     }
 
-    fun triggerUpdate(pos: BlockPos?) {
+    fun triggerUpdate(pos: BlockPos) {
         val chunk = level.getChunkAt(pos)
         level.sendBlockUpdated (pos, level.getBlockState(pos), level.getBlockState(pos), 3) //markAndNotifyBlock(pos, chunk, level.getBlockState(pos), level.getBlockState(pos), 3, 512)
         level.updateNeighborsAt(pos,level.getBlockState(pos).block)
+    }
+
+    fun triggerBlockChange(pos: BlockPos, prevState: BlockState, newState: BlockState) {
+        BlockStateInfo.onSetBlock(level, pos, prevState, newState)
     }
 }
