@@ -16,7 +16,7 @@ import java.lang.Math
 import java.util.*
 
 
-class ContraptionPosition {
+class ShipPosition {
     var orientation: Quaterniond
     var position: Vec3d
     var dimension: Optional<String>
@@ -61,9 +61,9 @@ class ContraptionPosition {
         omega = Optional.of(Vec3d.fromVec(contraption.omega))
     }
 
-    constructor(contraption: ServerShip, useGeometricCenter: Boolean) : this(contraption) {
+    constructor(ship: ServerShip, useGeometricCenter: Boolean) : this(ship) {
         if (useGeometricCenter) {
-            val shipBounds = contraption.shipAABB
+            val shipBounds = ship.shipAABB
             val shipCoordCenter: Vec3d = getMiddle(
                 Vec3d(shipBounds!!.minX().toDouble(), shipBounds.minY().toDouble(), shipBounds.minZ().toDouble()),
                 Vec3d(
@@ -71,14 +71,14 @@ class ContraptionPosition {
                 )
             )
             val shipCoordMassCenter: Vec3d =
-                Vec3d.fromVec(contraption.inertiaData.centerOfMassInShip).add(Vec3d(0.5, 0.5, 0.5))
-            val centerOfMassOffset: Vec3d = toWorldPos(contraption.transform, shipCoordMassCenter)
-                .sub(toWorldPos(contraption.transform, shipCoordCenter))
+                Vec3d.fromVec(ship.inertiaData.centerOfMassInShip).add(Vec3d(0.5, 0.5, 0.5))
+            val centerOfMassOffset: Vec3d = toWorldPos(ship.transform, shipCoordMassCenter)
+                .sub(toWorldPos(ship.transform, shipCoordCenter))
             position.subI(centerOfMassOffset)
         }
     }
 
-    constructor(position: ContraptionPosition) : this(
+    constructor(position: ShipPosition) : this(
         position.GetOrientation(),
         position.GetPosition(),
         if (position.dimension.isPresent) position.dimension.get() else null,
@@ -87,9 +87,9 @@ class ContraptionPosition {
         if (position.scale.isPresent) position.scale.get() else null
     )
 
-    fun toTeleport(contraption: ServerShip, useGeometricCenter: Boolean): ShipTeleportData {
+    fun toTeleport(ship: ServerShip, useGeometricCenter: Boolean): ShipTeleportData {
         if (useGeometricCenter) {
-            val shipBounds = contraption.shipAABB
+            val shipBounds = ship.shipAABB
             val shipCoordCenter: Vec3d = getMiddle(
                 Vec3d(shipBounds!!.minX().toDouble(), shipBounds.minY().toDouble(), shipBounds.minZ().toDouble()),
                 Vec3d(
@@ -97,10 +97,10 @@ class ContraptionPosition {
                 )
             )
             val shipCoordMassCenter: Vec3d =
-                Vec3d.fromVec(contraption.inertiaData.centerOfMassInShip).add(Vec3d(0.5, 0.5, 0.5))
-            val centerOfMassOffset: Vec3d = toWorldPos(contraption.transform, shipCoordMassCenter)
-                .sub(toWorldPos(contraption.transform, shipCoordCenter))
-            val temp = ContraptionPosition(this)
+                Vec3d.fromVec(ship.inertiaData.centerOfMassInShip).add(Vec3d(0.5, 0.5, 0.5))
+            val centerOfMassOffset: Vec3d = toWorldPos(ship.transform, shipCoordMassCenter)
+                .sub(toWorldPos(ship.transform, shipCoordCenter))
+            val temp = ShipPosition(this)
             temp.GetPosition().addI(centerOfMassOffset)
             return temp.toTeleport()
         }
