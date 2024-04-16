@@ -61,9 +61,9 @@ class ShipPosition {
         omega = Optional.of(Vec3d.fromVec(contraption.omega))
     }
 
-    constructor(ship: ServerShip, useGeometricCenter: Boolean) : this(ship) {
+    constructor(contraption: ServerShip, useGeometricCenter: Boolean) : this(contraption) {
         if (useGeometricCenter) {
-            val shipBounds = ship.shipAABB
+            val shipBounds = contraption.shipAABB
             val shipCoordCenter: Vec3d = getMiddle(
                 Vec3d(shipBounds!!.minX().toDouble(), shipBounds.minY().toDouble(), shipBounds.minZ().toDouble()),
                 Vec3d(
@@ -71,16 +71,16 @@ class ShipPosition {
                 )
             )
             val shipCoordMassCenter: Vec3d =
-                Vec3d.fromVec(ship.inertiaData.centerOfMassInShip).add(Vec3d(0.5, 0.5, 0.5))
-            val centerOfMassOffset: Vec3d = toWorldPos(ship.transform, shipCoordMassCenter)
-                .sub(toWorldPos(ship.transform, shipCoordCenter))
+                Vec3d.fromVec(contraption.inertiaData.centerOfMassInShip).add(Vec3d(0.5, 0.5, 0.5))
+            val centerOfMassOffset: Vec3d = toWorldPos(contraption.transform, shipCoordMassCenter)
+                .sub(toWorldPos(contraption.transform, shipCoordCenter))
             position.subI(centerOfMassOffset)
         }
     }
 
     constructor(position: ShipPosition) : this(
-        position.GetOrientation(),
-        position.GetPosition(),
+        position.getOrientation(),
+        position.getPosition(),
         if (position.dimension.isPresent) position.dimension.get() else null,
         if (position.velocity.isPresent) position.velocity.get() else null,
         if (position.omega.isPresent) position.omega.get() else null,
@@ -101,7 +101,7 @@ class ShipPosition {
             val centerOfMassOffset: Vec3d = toWorldPos(ship.transform, shipCoordMassCenter)
                 .sub(toWorldPos(ship.transform, shipCoordCenter))
             val temp = ShipPosition(this)
-            temp.GetPosition().addI(centerOfMassOffset)
+            temp.getPosition().addI(centerOfMassOffset)
             return temp.toTeleport()
         }
         return toTeleport()
@@ -126,43 +126,43 @@ class ShipPosition {
         position = toWorldPos(transform, position)
     }
 
-    fun GetOrientation(): Quaterniond {
+    fun getOrientation(): Quaterniond {
         return orientation
     }
 
-    fun SetOrientation(orientation: Quaterniond) {
+    fun setOrientation(orientation: Quaterniond) {
         this.orientation = orientation
     }
 
-    fun GetPosition(): Vec3d {
+    fun getPosition(): Vec3d {
         return position
     }
 
-    fun SetPosition(position: Vec3d) {
+    fun setPosition(position: Vec3d) {
         this.position = position
     }
 
-    fun SetDimension(dimension: String?) {
+    fun setDimension(dimension: String?) {
         this.dimension = Optional.ofNullable(dimension)
     }
 
-    fun SetVelocity(velocity: Vec3d?) {
+    fun getVelocity(velocity: Vec3d?) {
         this.velocity = Optional.ofNullable<Vec3d>(velocity)
     }
 
-    fun GetVelocity(): Optional<Vec3d> {
+    fun getVelocity(): Optional<Vec3d> {
         return velocity
     }
 
-    fun SetOmega(omega: Vec3d?) {
+    fun setOmega(omega: Vec3d?) {
         this.omega = Optional.ofNullable<Vec3d>(omega)
     }
 
-    fun GetOmega(): Optional<Vec3d> {
+    fun getOmega(): Optional<Vec3d> {
         return omega
     }
 
-    fun SetScale(scale: Double?) {
+    fun setScale(scale: Double?) {
         this.scale = Optional.ofNullable(scale)
     }
 
