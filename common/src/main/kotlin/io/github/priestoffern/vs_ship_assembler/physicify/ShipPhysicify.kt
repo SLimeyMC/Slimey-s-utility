@@ -15,13 +15,14 @@ import org.valkyrienskies.mod.common.shipObjectWorld
 import org.valkyrienskies.mod.common.util.toBlockPos
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
+import org.valkyrienskies.mod.common.util.toMinecraft
 
-fun physicifyBlocks(centerBlock: BlockPos, blocks: DenseBlockPosSet, level: ServerLevel, scale: Double): ServerShip {
+fun physicifyBlocks(blocks: DenseBlockPosSet, level: ServerLevel, scale: Double): ServerShip {
     if (blocks.isEmpty()) throw IllegalArgumentException()
 
     // Find the bound of the ship to be physicified
-    var structureCornerMin: BlockPos = BlockPos(Int.MAX_VALUE, Int.MAX_VALUE, Int.MAX_VALUE)
-    var structureCornerMax: BlockPos = BlockPos(Int.MIN_VALUE, Int.MIN_VALUE, Int.MIN_VALUE)
+    var structureCornerMin= BlockPos(Int.MAX_VALUE, Int.MAX_VALUE, Int.MAX_VALUE)
+    var structureCornerMax= BlockPos(Int.MIN_VALUE, Int.MIN_VALUE, Int.MIN_VALUE)
     blocks.forEachChunk { chunkX, chunkY, chunkZ, chunk ->
         chunk.forEach { x, y, z ->
             structureCornerMin = BlockPos(
@@ -39,9 +40,12 @@ fun physicifyBlocks(centerBlock: BlockPos, blocks: DenseBlockPosSet, level: Serv
 
     // Create new contraption at center of bounds
     val shipWorldPos: Vector3d = structureCornerMin.toJOMLD().add(structureCornerMax.toJOMLD()).div(2.0)
-    val shipPosition = ShipPosition(Quaterniond(0.0, 0.0, 0.0, 1.0), shipWorldPos, null)
-    val shipBlockPos: BlockPos = createShipAt(level, shipPosition, scale)
+    val shipData = ShipData(Quaterniond(0.0, 0.0, 0.0, 1.0), shipWorldPos, null)
+    val shipBlockPos: BlockPos = createShipAt(level, shipData, scale)
     val ship: ServerShip = level.getShipManagingPos(shipBlockPos)!!
+
+    // Make a class to help with moving out the block
+    val relocateLevel= RelocateLevel(level)
 
 
     var centerBlockReplaced = false
@@ -51,15 +55,15 @@ fun physicifyBlocks(centerBlock: BlockPos, blocks: DenseBlockPosSet, level: Serv
             val shipPos: BlockPos = shipBlockPos.offset(relative)
 
             // Copy blocks and check if the center block got replaced (is default a stone block)
-            copyBlock(level, BlockPos(x, y, z), shipPos)
+            relocateLevel.copyBlock(BlockPos(x, y, z), shipPos)
             if (relative == BlockPos.ZERO) centerBlockReplaced = true
 
             // Remove block after replacing it
-            removeBlock(level, BlockPos(x, y, z))
+            relocateLevel.removeBlock(BlockPos(x, y, z))
 
             // Trigger update
-            triggerUpdate(level, BlockPos(x, y, z))
-            triggerUpdate(level, shipPos)
+            relocateLevel.triggerUpdate(BlockPos(x, y, z))
+            relocateLevel.triggerUpdate(shipPos)
         }
     }
 
@@ -67,37 +71,39 @@ fun physicifyBlocks(centerBlock: BlockPos, blocks: DenseBlockPosSet, level: Serv
         level.setBlock(shipBlockPos, Blocks.AIR.defaultBlockState(), 3)
     }
 
-    teleportContraption(level, ship, shipPosition)
+    teleportContraption(level, ship, shipData)
 
     return ship
 }
 
+private fun teleportContraption(level: ServerLevel, ship: ServerShip, position: ShipData) {
+    level.server.shipObjectWorld
+        .teleportShip(ship, position.toTeleport())
+}
 
-private fun createShipAt(level: ServerLevel, shipPosition: ShipPosition, scale: Double): BlockPos {
+private fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPos {
 
     // Get parent ship (if existing)
     val parentShip: Ship? =
-        level.getShipManagingPos(shipPosition.getPosition())
+        level.getShipManagingPos(shipData.getPosition())
 
     // Apply parent ship translation if available
     if (parentShip != null) {
-        shipPosition.toWorldPosition(parentShip.transform)
+        shipData.toWorldPosition(parentShip.transform)
     }
 
     // Create new contraption
     val dimensionId: String = level.dimensionId
     val newShip: Ship = level.server.shipObjectWorld
-        .createNewShipAtBlock(shipPosition.position.floorToVector3i(), false, scale, dimensionId)
+        .createNewShipAtBlock(shipData.position.floorToVector3i(), false, scale, dimensionId)
 
     // Stone for safety reasons
-    val centerBlockPos: BlockPos = toContraptionBlockPos(
-        newShip.transform,
-        BlockPos(shipPosition.position.floorToVector3i().toMinecraft())
-    )
+    val t = Vector3d()
+    val centerBlockPos= BlockPos(newShip.shipAABB!!.center(t).toMinecraft())
     level.setBlock(centerBlockPos, Blocks.STONE.defaultBlockState(), 3)
 
     // Teleport ship to final destination
     level.server.shipObjectWorld
-        .teleportShip(newShip as ServerShip, shipPosition.toTeleport())
+        .teleportShip(newShip as ServerShip, shipData.toTeleport())
     return centerBlockPos
 }
