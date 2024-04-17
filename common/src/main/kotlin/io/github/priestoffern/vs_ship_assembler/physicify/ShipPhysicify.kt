@@ -17,7 +17,7 @@ import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import org.valkyrienskies.mod.common.util.toMinecraft
 
-fun physicifyBlocks(blocks: DenseBlockPosSet, level: ServerLevel, scale: Double): ServerShip {
+fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double): ServerShip {
     if (blocks.isEmpty()) throw IllegalArgumentException()
 
     // Find the bound of the ship to be physicified
