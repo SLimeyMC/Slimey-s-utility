@@ -2,6 +2,7 @@ package io.github.priestoffern.vs_ship_assembler.items
 
 import de.m_marvin.univec.impl.Vec3d
 import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerTags
+import io.github.priestoffern.vs_ship_assembler.physicify.physicifyBlocks
 import io.github.priestoffern.vs_ship_assembler.rendering.Renderer
 import io.github.priestoffern.vs_ship_assembler.rendering.RenderingData
 import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
@@ -9,6 +10,7 @@ import io.github.priestoffern.vs_ship_assembler.util.*
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.TextComponent
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
@@ -62,7 +64,6 @@ class ShipAssemblerItem(properties: Properties): Item(properties) {
     }
 
     private fun makeSelection(level: Level, player: Player, pos: BlockPos){
-
         if (!level.isClientSide) {
             if (player.isShiftKeyDown and (level.getBlockState(pos).isAir)) {
                 firstPosition = null
@@ -97,7 +98,6 @@ class ShipAssemblerItem(properties: Properties): Item(properties) {
                 for (x in min(firstPosition!!.x, secondPosition!!.x)..max(firstPosition!!.x, secondPosition!!.x)) {
                     for (y in min(firstPosition!!.y, secondPosition!!.y)..max(firstPosition!!.y, secondPosition!!.y)) {
                         for (z in min(firstPosition!!.z, secondPosition!!.z)..max(firstPosition!!.z, secondPosition!!.z)) {
-
                             if (level.getBlockState(BlockPos(x,y,z)).tags.noneMatch { it == VsShipAssemblerTags.FORBIDDEN_ASSEMBLE })
                             blockPosSet.add(x, y, z)
                         }
@@ -105,7 +105,7 @@ class ShipAssemblerItem(properties: Properties): Item(properties) {
                 }
 
                 if (blockPosSet.size > 0) {
-                    assembleToContraption(level, blockPosSet,true,1.0)
+                    physicifyBlocks(level as ServerLevel, blockPosSet, 1.0)
                     player.sendMessage(TextComponent("Assembled!"), Util.NIL_UUID)
                 } else {
                     player.sendMessage(TextComponent("Failed to Assemble: Empty ship"), Util.NIL_UUID)

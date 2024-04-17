@@ -12,7 +12,7 @@ import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet;
 import org.valkyrienskies.mod.common.assembly.ShipAssemblyKt;
 
-import static io.github.priestoffern.vs_ship_assembler.util.PhysicsUtilityKt.assembleToContraption;
+import static io.github.priestoffern.vs_ship_assembler.physicify.ShipPhysicifyKt.physicifyBlocks;
 
 @Mixin(ShipAssemblyKt.class)
 public final class ShipAssemblyMixin {
@@ -21,13 +21,6 @@ public final class ShipAssemblyMixin {
     // and create duplication glitch on create stuff
     @Inject(method = "createNewShipWithBlocks", at = @At("HEAD"), cancellable = true)
     private static void onCreateNewShipWithBlocks(@NotNull BlockPos centerBlock, @NotNull DenseBlockPosSet blocks, @NotNull ServerLevel level, CallbackInfoReturnable<ServerShip> cir) {
-        DenseBlockPosSet newBlocks = new DenseBlockPosSet();
-        blocks.forEach(pos -> {
-            if (level.getBlockState(new BlockPos(pos.x(), pos.y(), pos.z()))
-                    .getTags().noneMatch(tag -> tag.equals(VsShipAssemblerTags.FORBIDDEN_ASSEMBLE))) {
-                newBlocks.add(pos);
-            }
-        });
-        cir.setReturnValue((ServerShip) assembleToContraption(level, newBlocks, true, 1.0));
+        cir.setReturnValue((ServerShip) physicifyBlocks(level, blocks,1.0));
     }
 }

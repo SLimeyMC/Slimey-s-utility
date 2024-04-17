@@ -14,9 +14,8 @@ import net.minecraft.world.item.CreativeModeTab.TAB_MISC
 object VsShipAssemblerItems {
     val ITEMS = DeferredRegister.create(VsShipAssemblerMod.MOD_ID, Registry.ITEM_REGISTRY)
 
-    var SHIP_ASSEMBLER: RegistrySupplier<Item> = ITEMS.register("ship_assembler") { ShipAssemblerItem(Item.Properties().tab(
-        TAB_MISC
-    ).stacksTo(1)) }
+    var SHIP_ASSEMBLER: RegistrySupplier<Item> = ITEMS.register("ship_assembler")
+    { ShipAssemblerItem(Item.Properties().tab(TAB_MISC).stacksTo(1)) }
     fun register() {
         ITEMS.register()
     }
