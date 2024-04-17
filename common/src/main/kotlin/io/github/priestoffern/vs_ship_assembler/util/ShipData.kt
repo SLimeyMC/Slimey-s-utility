@@ -77,7 +77,7 @@ class ShipData {
         if (position.scale.isPresent) position.scale.get() else null
     )
 
-    fun toTeleport(ship: ServerShip, useGeometricCenter: Boolean): ShipTeleportData {
+    fun toTeleportData(ship: ServerShip, useGeometricCenter: Boolean): ShipTeleportData {
         if (useGeometricCenter) {
             val shipBound = ship.shipAABB
             val shipCoordBoundCenter: Vector3d = Vector3d()
@@ -88,12 +88,12 @@ class ShipData {
                 .sub(transformPosition(ship.transform, shipCoordBoundCenter))
             val temp = ShipData(this)
             temp.getPosition().add(centerOfMassOffset)
-            return temp.toTeleport()
+            return temp.toTeleportData()
         }
-        return toTeleport()
+        return toTeleportData()
     }
 
-    fun toTeleport(): ShipTeleportData {
+    fun toTeleportData(): ShipTeleportData {
         return ShipTeleportDataImpl(
             position,
             orientation,

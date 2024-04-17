@@ -45,7 +45,7 @@ fun physicifyBlocks(blocks: DenseBlockPosSet, level: ServerLevel, scale: Double)
     val ship: ServerShip = level.getShipManagingPos(shipBlockPos)!!
 
     // Make a class to help with moving out the block
-    val relocateLevel= RelocateLevel(level)
+    val relocateLevel = RelocateLevel(level)
 
 
     var centerBlockReplaced = false
@@ -76,12 +76,12 @@ fun physicifyBlocks(blocks: DenseBlockPosSet, level: ServerLevel, scale: Double)
     return ship
 }
 
-private fun teleportContraption(level: ServerLevel, ship: ServerShip, position: ShipData) {
+fun teleportContraption(level: ServerLevel, ship: ServerShip, position: ShipData) {
     level.server.shipObjectWorld
-        .teleportShip(ship, position.toTeleport())
+        .teleportShip(ship, position.toTeleportData())
 }
 
-private fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPos {
+fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPos {
 
     // Get parent ship (if existing)
     val parentShip: Ship? =
@@ -104,6 +104,6 @@ private fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double):
 
     // Teleport ship to final destination
     level.server.shipObjectWorld
-        .teleportShip(newShip as ServerShip, shipData.toTeleport())
+        .teleportShip(newShip as ServerShip, shipData.toTeleportData())
     return centerBlockPos
 }
