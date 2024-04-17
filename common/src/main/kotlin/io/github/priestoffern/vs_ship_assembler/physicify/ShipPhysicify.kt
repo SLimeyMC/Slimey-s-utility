@@ -71,12 +71,12 @@ fun physicifyBlocks(blocks: DenseBlockPosSet, level: ServerLevel, scale: Double)
         level.setBlock(shipBlockPos, Blocks.AIR.defaultBlockState(), 3)
     }
 
-    teleportContraption(level, ship, shipData)
+    teleportShip(level, ship, shipData)
 
     return ship
 }
 
-fun teleportContraption(level: ServerLevel, ship: ServerShip, position: ShipData) {
+fun teleportShip(level: ServerLevel, ship: ServerShip, position: ShipData) {
     level.server.shipObjectWorld
         .teleportShip(ship, position.toTeleportData())
 }
