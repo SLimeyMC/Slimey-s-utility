@@ -41,15 +41,12 @@ class ShipData {
     }
 
     constructor(orientation: Quaterniondc, position: Vector3dc, dimension: String?) : this(
-        Quaterniond(
-            orientation.x(),
-            orientation.y(),
-            orientation.z(),
-            orientation.w()
-        ), Vector3d(position.x(), position.y(), position.z()), dimension
+        Quaterniond(orientation.x(), orientation.y(), orientation.z(), orientation.w()),
+        Vector3d(position.x(), position.y(), position.z()), dimension
     )
 
     constructor(transform: ShipTransform) : this(transform.shipToWorldRotation, transform.positionInWorld, null)
+
     constructor(ship: Ship) : this(ship.transform) {
         velocity = Optional.of(Vector3d(ship.velocity))
         omega = Optional.of(Vector3d(ship.omega))
@@ -77,23 +74,21 @@ class ShipData {
         if (position.scale.isPresent) position.scale.get() else null
     )
 
-    fun toTeleportData(ship: ServerShip, useGeometricCenter: Boolean): ShipTeleportData {
-        if (useGeometricCenter) {
-            val shipBound = ship.shipAABB
-            val shipCoordBoundCenter: Vector3d = Vector3d()
-            shipBound?.center(shipCoordBoundCenter)
-            val shipCoordMassCenter: Vector3d =
-                Vector3d(ship.inertiaData.centerOfMassInShip).add(Vector3d(0.5))
-            val centerOfMassOffset: Vector3d = transformPosition(ship.transform, shipCoordMassCenter)
-                .sub(transformPosition(ship.transform, shipCoordBoundCenter))
-            val temp = ShipData(this)
-            temp.position.add(centerOfMassOffset)
-            return temp.toTeleportData()
-        }
-        return toTeleportData()
+    // Use Geometric center idk
+    fun toShipTeleportData(ship: ServerShip): ShipTeleportData {
+        val shipBound = ship.shipAABB
+        val shipCoordBoundCenter: Vector3d = Vector3d()
+        shipBound?.center(shipCoordBoundCenter)
+        val shipCoordMassCenter: Vector3d =
+            Vector3d(ship.inertiaData.centerOfMassInShip).add(Vector3d(0.5))
+        val centerOfMassOffset: Vector3d = transformPosition(ship.transform, shipCoordMassCenter)
+            .sub(transformPosition(ship.transform, shipCoordBoundCenter))
+        val temp = ShipData(this)
+        temp.position.add(centerOfMassOffset)
+        return temp.toShipTeleportData()
     }
 
-    fun toTeleportData(): ShipTeleportData {
+    fun toShipTeleportData(): ShipTeleportData {
         return ShipTeleportDataImpl(
             position,
             orientation,
