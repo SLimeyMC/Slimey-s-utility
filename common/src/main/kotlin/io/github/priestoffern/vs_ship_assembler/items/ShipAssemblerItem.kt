@@ -6,7 +6,6 @@ import io.github.priestoffern.vs_ship_assembler.physicify.physicifyBlocks
 import io.github.priestoffern.vs_ship_assembler.rendering.Renderer
 import io.github.priestoffern.vs_ship_assembler.rendering.RenderingData
 import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
-import io.github.priestoffern.vs_ship_assembler.util.*
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.TextComponent
@@ -22,6 +21,7 @@ import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.Vec3
 import org.joml.Vector3d
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
 import org.valkyrienskies.mod.common.getShipObjectManagingPos
@@ -31,11 +31,11 @@ import java.awt.Color
 import java.lang.Math.*
 
 
-class ShipAssemblerItem(properties: Properties): Item(properties) {
+class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
 
-    var firstPosition: BlockPos? = null
-    var secondPosition: BlockPos? = null
-    var SelectionZone: RenderingData? = null
+    private var selectionStart: BlockPos? = null
+    private var selectionEnd: BlockPos? = null
+    private var selectionZone: RenderingData? = null
 
     override fun use(level: Level, player: Player, interactionHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val clipResult = level.clip(
@@ -55,100 +55,81 @@ class ShipAssemblerItem(properties: Properties): Item(properties) {
 
         val pos = clipResult.blockPos
 
-
         makeSelection(level, player, pos)
-
-
 
         return super.use(level, player, interactionHand)
     }
 
-    private fun makeSelection(level: Level, player: Player, pos: BlockPos){
-        if (!level.isClientSide) {
-            if (player.isShiftKeyDown and (level.getBlockState(pos).isAir)) {
-                firstPosition = null
-                secondPosition = null
-                if (SelectionZone != null) Renderer.removeRender(SelectionZone!!)
-                SelectionZone = null
-                player.sendMessage(TextComponent("Selection reset"), Util.NIL_UUID)
-            } else if (firstPosition == null) {
-                if (level.getShipObjectManagingPos(pos) == null) {
-                    firstPosition = pos
-                    player.sendMessage(TextComponent("First pos selected"), Util.NIL_UUID)
-                } else {
-                    player.sendMessage(TextComponent("Selected position is on a ship!"), Util.NIL_UUID)
+    private fun makeSelection(level: Level, player: Player, pos: BlockPos) {
+        if (level.isClientSide) return
+
+        if (player.isShiftKeyDown and (level.getBlockState(pos).isAir)) {
+            selectionStart = null
+            selectionEnd = null
+            if (selectionZone != null) Renderer.removeRender(selectionZone!!)
+            selectionZone = null
+            player.sendMessage(TextComponent("Selection reset"), Util.NIL_UUID)
+            return
+        }
+
+        if (level.getShipObjectManagingPos(pos) != null) {
+            player.sendMessage(TextComponent("Selected position is on a ship!"), Util.NIL_UUID)
+            return
+        }
+
+        if (selectionStart == null) {
+            selectionStart = pos
+            player.sendMessage(TextComponent("First pos selected"), Util.NIL_UUID)
+            return
+        }
+        if (selectionEnd == null) {
+            if (selectionZone!=null) Renderer.removeRender(selectionZone!!)
+            selectionZone = null
+
+            selectionEnd = pos
+            player.sendMessage(TextComponent("Second pos selected"), Util.NIL_UUID)
+            val zone = SelectionZoneRenderer(Vec3d(selectionStart!!.x.toDouble(),
+                selectionStart!!.y.toDouble(), selectionStart!!.z.toDouble()),Vec3d(pos.x.toDouble(),pos.y.toDouble(),pos.z.toDouble()), Color.GREEN)
+            selectionZone = Renderer.addRender(zone)
+            return
+        }
+
+        val blockPosSet = DenseBlockPosSet()
+        for (x in min(selectionStart!!.x, selectionEnd!!.x)..max(selectionStart!!.x, selectionEnd!!.x)) {
+            for (y in min(selectionStart!!.y, selectionEnd!!.y)..max(selectionStart!!.y, selectionEnd!!.y)) {
+                for (z in min(selectionStart!!.z, selectionEnd!!.z)..max(selectionStart!!.z, selectionEnd!!.z)) {
+                    if (level.getBlockState(BlockPos(x,y,z)).tags.noneMatch { it == VsShipAssemblerTags.FORBIDDEN_ASSEMBLE })
+                    blockPosSet.add(x, y, z)
                 }
-            } else if (secondPosition == null) {
-                if (level.getShipObjectManagingPos(pos) == null) {
-
-
-                    if (SelectionZone!=null) Renderer.removeRender(SelectionZone!!)
-                    SelectionZone = null
-
-                    secondPosition = pos
-                    player.sendMessage(TextComponent("Second pos selected"), Util.NIL_UUID)
-                    val SZ = SelectionZoneRenderer(Vec3d(firstPosition!!.x.toDouble(),
-                        firstPosition!!.y.toDouble(), firstPosition!!.z.toDouble()),Vec3d(pos.x.toDouble(),pos.y.toDouble(),pos.z.toDouble()), Color.GREEN)
-                    SelectionZone = Renderer.addRender(SZ)
-                } else {
-                    player.sendMessage(TextComponent("Selected position is on a ship!"), Util.NIL_UUID)
-                }
-            } else {
-                val blockPosSet = DenseBlockPosSet()
-                for (x in min(firstPosition!!.x, secondPosition!!.x)..max(firstPosition!!.x, secondPosition!!.x)) {
-                    for (y in min(firstPosition!!.y, secondPosition!!.y)..max(firstPosition!!.y, secondPosition!!.y)) {
-                        for (z in min(firstPosition!!.z, secondPosition!!.z)..max(firstPosition!!.z, secondPosition!!.z)) {
-                            if (level.getBlockState(BlockPos(x,y,z)).tags.noneMatch { it == VsShipAssemblerTags.FORBIDDEN_ASSEMBLE })
-                            blockPosSet.add(x, y, z)
-                        }
-                    }
-                }
-
-                if (blockPosSet.size > 0) {
-                    physicifyBlocks(level as ServerLevel, blockPosSet, 1.0)
-                    player.sendMessage(TextComponent("Assembled!"), Util.NIL_UUID)
-                } else {
-                    player.sendMessage(TextComponent("Failed to Assemble: Empty ship"), Util.NIL_UUID)
-                }
-
-                if (SelectionZone!=null) Renderer.removeRender(SelectionZone!!)
-                SelectionZone = null
-                firstPosition = null
-                secondPosition = null
             }
         }
+
+        if (blockPosSet.size > 0) {
+            physicifyBlocks(level as ServerLevel, blockPosSet, 1.0)
+            player.sendMessage(TextComponent("Assembled!"), Util.NIL_UUID)
+        } else {
+            player.sendMessage(TextComponent("Failed to Assemble: Empty ship"), Util.NIL_UUID)
+        }
+
+        if (selectionZone != null) Renderer.removeRender(selectionZone!!)
+        selectionZone = null
+        selectionStart = null
+        selectionEnd = null
     }
 
-
-    @Override
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
         super.inventoryTick(stack, level, entity, slotId, isSelected)
 
-        if (isSelected && firstPosition!=null && secondPosition == null) {
-            if (SelectionZone!=null) Renderer.removeRender(SelectionZone!!)
-            SelectionZone = null
+        if (isSelected && selectionStart != null && selectionEnd == null) {
+            if (selectionZone != null) Renderer.removeRender(selectionZone!!)
+            selectionZone = null
 
             val res = raycast(level,entity as Player,ClipContext.Fluid.NONE)
-            if (res!=null) {
-                val SZ = SelectionZoneRenderer(Vec3d(firstPosition!!.x.toDouble(),
-                    firstPosition!!.y.toDouble(), firstPosition!!.z.toDouble()),Vec3d(res.blockPos.x.toDouble(),res.blockPos.y.toDouble(),res.blockPos.z.toDouble()), Color.GREEN)
-                SelectionZone = Renderer.addRender(SZ)
+            if (res != null) {
+                val SZ = SelectionZoneRenderer(Vec3d(selectionStart!!.x.toDouble(),
+                    selectionStart!!.y.toDouble(), selectionStart!!.z.toDouble()),Vec3d(res.blockPos.x.toDouble(),res.blockPos.y.toDouble(),res.blockPos.z.toDouble()), Color.GREEN)
+                selectionZone = Renderer.addRender(SZ)
             }
         }
-    }
-
-    protected fun raycast(level: Level, player: Player, fluidMode: ClipContext.Fluid): BlockHitResult? {
-        val f = player.xRot
-        val g = player.yRot
-        val vec3 = player.eyePosition
-        val h = Mth.cos(-g * 0.017453292f - 3.1415927f)
-        val i = Mth.sin(-g * 0.017453292f - 3.1415927f)
-        val j = -Mth.cos(-f * 0.017453292f)
-        val k = Mth.sin(-f * 0.017453292f)
-        val l = i * j
-        val n = h * j
-        val d = 5.0
-        val vec32 = vec3.add(l.toDouble() * d, k.toDouble() * d, n.toDouble() * d)
-        return level.clip(ClipContext(vec3, vec32, ClipContext.Block.OUTLINE, fluidMode, player))
     }
 }
