@@ -1,4 +1,4 @@
-package io.github.priestoffern.vs_ship_assembler.mixin;
+package io.github.priestoffern.vs_ship_assembler.mixin.features;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.priestoffern.vs_ship_assembler.rendering.Renderer;

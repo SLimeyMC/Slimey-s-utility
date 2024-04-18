@@ -1,4 +1,4 @@
-package io.github.priestoffern.vs_ship_assembler.mixin;
+package io.github.priestoffern.vs_ship_assembler.mixin.features;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
