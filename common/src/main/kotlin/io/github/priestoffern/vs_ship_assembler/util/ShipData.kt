@@ -69,8 +69,8 @@ class ShipData {
     }
 
     constructor(position: ShipData) : this(
-        position.getOrientation(),
-        position.getPosition(),
+        position.orientation,
+        position.position,
         if (position.dimension.isPresent) position.dimension.get() else null,
         if (position.velocity.isPresent) position.velocity.get() else null,
         if (position.omega.isPresent) position.omega.get() else null,
@@ -87,7 +87,7 @@ class ShipData {
             val centerOfMassOffset: Vector3d = transformPosition(ship.transform, shipCoordMassCenter)
                 .sub(transformPosition(ship.transform, shipCoordBoundCenter))
             val temp = ShipData(this)
-            temp.getPosition().add(centerOfMassOffset)
+            temp.position.add(centerOfMassOffset)
             return temp.toTeleportData()
         }
         return toTeleportData()
@@ -110,46 +110,6 @@ class ShipData {
             orientation
         )
         position = transformPosition(transform, position)
-    }
-
-    fun getOrientation(): Quaterniond {
-        return orientation
-    }
-
-    fun setOrientation(orientation: Quaterniond) {
-        this.orientation = orientation
-    }
-
-    fun getPosition(): Vector3d {
-        return position
-    }
-
-    fun setPosition(position: Vector3d) {
-        this.position = position
-    }
-
-    fun setDimension(dimension: String?) {
-        this.dimension = Optional.ofNullable(dimension)
-    }
-
-    fun getVelocity(velocity: Vector3d) {
-        this.velocity = Optional.ofNullable<Vector3d>(velocity)
-    }
-
-    fun getVelocity(): Optional<Vector3d> {
-        return velocity
-    }
-
-    fun setOmega(omega: Vector3d?) {
-        this.omega = Optional.ofNullable<Vector3d>(omega)
-    }
-
-    fun getOmega(): Optional<Vector3d> {
-        return omega
-    }
-
-    fun setScale(scale: Double?) {
-        this.scale = Optional.ofNullable(scale)
     }
 
     private fun transformPosition(ship: ShipTransform, pos: Vector3d): Vector3d {

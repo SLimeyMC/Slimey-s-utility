@@ -85,7 +85,7 @@ fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPo
 
     // Get parent ship (if existing)
     val parentShip: Ship? =
-        level.getShipManagingPos(shipData.getPosition())
+        level.getShipManagingPos(shipData.position)
 
     // Apply parent ship translation if available
     if (parentShip != null) {
@@ -99,7 +99,7 @@ fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPo
 
     // Stone for safety reasons
     val t = Vector3d()
-    val centerBlockPos= BlockPos(newShip.shipAABB!!.center(t).toMinecraft())
+    val centerBlockPos = BlockPos(newShip.shipAABB!!.center(t).toMinecraft())
     level.setBlock(centerBlockPos, Blocks.STONE.defaultBlockState(), 3)
 
     // Teleport ship to final destination
