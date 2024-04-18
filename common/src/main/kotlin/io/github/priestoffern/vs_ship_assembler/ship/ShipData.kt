@@ -1,4 +1,4 @@
-package io.github.priestoffern.vs_ship_assembler.util
+package io.github.priestoffern.vs_ship_assembler.ship
 
 
 import org.joml.*

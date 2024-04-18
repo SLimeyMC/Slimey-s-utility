@@ -1,5 +1,6 @@
 package io.github.priestoffern.vs_ship_assembler.physicify
 
+import io.github.priestoffern.vs_ship_assembler.ship.ShipData
 import io.github.priestoffern.vs_ship_assembler.util.*
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
