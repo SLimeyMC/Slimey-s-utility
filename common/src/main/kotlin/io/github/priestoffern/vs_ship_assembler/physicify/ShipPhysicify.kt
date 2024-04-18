@@ -3,7 +3,9 @@ package io.github.priestoffern.vs_ship_assembler.physicify
 import io.github.priestoffern.vs_ship_assembler.util.*
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.phys.Vec3
 import org.joml.Math
 import org.joml.*
 import org.valkyrienskies.core.api.ships.ServerShip
@@ -16,13 +18,15 @@ import org.valkyrienskies.mod.common.util.toBlockPos
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import org.valkyrienskies.mod.common.util.toMinecraft
+import org.valkyrienskies.mod.common.world.clipIncludeShips
+import java.util.*
 
 fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double): ServerShip {
     if (blocks.isEmpty()) throw IllegalArgumentException()
 
     // Find the bound of the ship to be physicified
-    var structureCornerMin= BlockPos(Int.MAX_VALUE, Int.MAX_VALUE, Int.MAX_VALUE)
-    var structureCornerMax= BlockPos(Int.MIN_VALUE, Int.MIN_VALUE, Int.MIN_VALUE)
+    var structureCornerMin = BlockPos(Int.MAX_VALUE, Int.MAX_VALUE, Int.MAX_VALUE)
+    var structureCornerMax = BlockPos(Int.MIN_VALUE, Int.MIN_VALUE, Int.MIN_VALUE)
     blocks.forEachChunk { chunkX, chunkY, chunkZ, chunk ->
         chunk.forEach { x, y, z ->
             structureCornerMin = BlockPos(
@@ -76,9 +80,38 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double)
     return ship
 }
 
-fun teleportShip(level: ServerLevel, ship: ServerShip, position: ShipData) {
+fun scaleShip(level: ServerLevel, ship: ServerShip, scale: Double) {
+    val shipData = ShipData(ship)
+    // Start checking if ship is hitting something (not inluding it's parent and children and it's corner)
+    val rayXStart = Vec3(ship.worldAABB.maxX() + 1.0, shipData.position.y, shipData.position.z)
+    val rayXEnd = Vec3(ship.worldAABB.minX() - 1.0, shipData.position.y, shipData.position.z)
+    val rayYStart = Vec3(shipData.position.x, ship.worldAABB.maxY() + 1.0, shipData.position.z)
+    val rayYEnd = Vec3(shipData.position.x, ship.worldAABB.minY() - 1.0, shipData.position.z)
+    val rayZStart = Vec3(shipData.position.x, shipData.position.y, ship.worldAABB.maxZ() + 1.0)
+    val rayZEnd = Vec3(shipData.position.x, shipData.position.y, ship.worldAABB.minZ() - 1.0)
+
+    val shipPosition = shipData.position.toMinecraft()
+
+    shipData.scale = Optional.of(ship.transform.shipToWorldScaling.mul(scale, Vector3d()).x)
+
+    val raycastTo = fun(position: Vec3): Double {
+        return level.clipIncludeShips(
+            ClipContext(shipPosition, position, ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, null)
+        ).location.distanceTo(shipPosition)
+    }
+
+    // If it hit move the ship location further away from the BlockHitResult
+    val pushDistance = Vector3d(
+        raycastTo(rayXEnd) - raycastTo(rayXStart),
+        raycastTo(rayYEnd) - raycastTo(rayYStart),
+        raycastTo(rayZEnd) - raycastTo(rayZStart)
+    )
+
+    shipData.velocity = Optional.of(pushDistance.mul(scale).sub(pushDistance))
+
+    scaleShip(level, ship, scale)
     level.server.shipObjectWorld
-        .teleportShip(ship, position.toTeleportData())
+        .teleportShip(ship, shipData.toShipTeleportData())
 }
 
 fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPos {
@@ -104,6 +137,11 @@ fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPo
 
     // Teleport ship to final destination
     level.server.shipObjectWorld
-        .teleportShip(newShip as ServerShip, shipData.toTeleportData())
+        .teleportShip(newShip as ServerShip, shipData.toShipTeleportData())
     return centerBlockPos
+}
+
+private fun teleportShip(level: ServerLevel, ship: ServerShip, shipData: ShipData) {
+    level.server.shipObjectWorld
+        .teleportShip(ship, shipData.toShipTeleportData())
 }
