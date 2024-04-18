@@ -24,14 +24,14 @@ class ShipData {
         dimension: String?,
         velocity: Vector3d?,
         omega: Vector3d?,
-        scale: Double?
+        scalarScale: Double?
     ) {
         this.orientation = orientation
         this.position = position
         this.dimension = Optional.ofNullable(dimension)
         this.velocity = Optional.ofNullable<Vector3d>(velocity)
         this.omega = Optional.ofNullable<Vector3d>(omega)
-        this.scale = Optional.ofNullable(scale)
+        this.scale = Optional.ofNullable<Double>(scalarScale)
     }
 
     constructor(orientation: Quaterniond, position: Vector3d, dimension: String?) {
