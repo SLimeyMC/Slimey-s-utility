@@ -1,32 +1,30 @@
 package io.github.priestoffern.vs_ship_assembler.items
 
-import de.m_marvin.univec.impl.Vec3d
 import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerTags
 import io.github.priestoffern.vs_ship_assembler.physicify.physicifyBlocks
 import io.github.priestoffern.vs_ship_assembler.rendering.Renderer
 import io.github.priestoffern.vs_ship_assembler.rendering.RenderingData
 import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
+import io.github.priestoffern.vs_ship_assembler.util.toFloat
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Vec3i
 import net.minecraft.network.chat.TextComponent
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.util.Mth
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
-import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.SoundType
-import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3d
+import org.joml.Vector3f
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
-import org.valkyrienskies.mod.common.getShipObjectManagingPos
-import org.valkyrienskies.mod.common.util.toJOML
-import org.valkyrienskies.mod.common.util.toMinecraft
+import org.valkyrienskies.mod.common.util.toJOMLF
+import org.valkyrienskies.mod.util.logger
 import java.awt.Color
 import java.lang.Math.*
 
@@ -37,25 +35,19 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
     private var selectionEnd: BlockPos? = null
     private var selectionZone: RenderingData? = null
 
+    private var selected: BlockPos? = null
+
     override fun use(level: Level, player: Player, interactionHand: InteractionHand): InteractionResultHolder<ItemStack> {
-        val clipResult = level.clip(
-            ClipContext(
-                (Vector3d(player.eyePosition.toJOML()).toMinecraft()),
-                (player.eyePosition.toJOML()
-                    .add(0.5, 0.5, 0.5)
-                    .add(Vector3d(player.lookAngle.toJOML()).mul(10.0)) //distance
-                        ).toMinecraft(),
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                null
-            )
+        val clipResult = raycastIncludeShips(
+            level,
+            player,
+            ClipContext.Fluid.NONE
         )
+        logger("${player.name} hit ${clipResult.blockPos}")
         //player.sendMessage(TextComponent(" ${clipResult.blockPos}"), Util.NIL_UUID)
         player.playSound(SoundType.AMETHYST_CLUSTER.placeSound, 1F, 1F)
 
-        val pos = clipResult.blockPos
-
-        makeSelection(level, player, pos)
+        makeSelection(level, player, clipResult.blockPos)
 
         return super.use(level, player, interactionHand)
     }
@@ -72,10 +64,10 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
             return
         }
 
-        if (level.getShipObjectManagingPos(pos) != null) {
-            player.sendMessage(TextComponent("Selected position is on a ship!"), Util.NIL_UUID)
-            return
-        }
+//        if (level.getShipObjectManagingPos(pos) != null) {
+//            player.sendMessage(TextComponent("Selected position is on a ship!"), Util.NIL_UUID)
+//            return
+//        }
 
         if (selectionStart == null) {
             selectionStart = pos
@@ -88,8 +80,11 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
 
             selectionEnd = pos
             player.sendMessage(TextComponent("Second pos selected"), Util.NIL_UUID)
-            val zone = SelectionZoneRenderer(Vec3d(selectionStart!!.x.toDouble(),
-                selectionStart!!.y.toDouble(), selectionStart!!.z.toDouble()),Vec3d(pos.x.toDouble(),pos.y.toDouble(),pos.z.toDouble()), Color.GREEN)
+            val zone = SelectionZoneRenderer(
+                Vec3i(selectionStart!!.x, selectionStart!!.y, selectionStart!!.z).toJOMLF(),
+                Vec3i(pos.x, pos.y, pos.z).toJOMLF(),
+                Color.GREEN
+            )
             selectionZone = Renderer.addRender(zone)
             return
         }
@@ -117,19 +112,22 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
         selectionEnd = null
     }
 
-    override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected)
+    override fun onUseTick(level: Level, player: LivingEntity, stack: ItemStack, remainingUseDuration: Int) {
+        super.onUseTick(level, player, stack, remainingUseDuration)
 
-        if (isSelected && selectionStart != null && selectionEnd == null) {
+        if (selectionStart != null && selectionEnd == null) {
             if (selectionZone != null) Renderer.removeRender(selectionZone!!)
             selectionZone = null
 
-            val res = raycast(level,entity as Player,ClipContext.Fluid.NONE)
-            if (res != null) {
-                val SZ = SelectionZoneRenderer(Vec3d(selectionStart!!.x.toDouble(),
-                    selectionStart!!.y.toDouble(), selectionStart!!.z.toDouble()),Vec3d(res.blockPos.x.toDouble(),res.blockPos.y.toDouble(),res.blockPos.z.toDouble()), Color.GREEN)
-                selectionZone = Renderer.addRender(SZ)
-            }
+            val blockHitResult = raycast(level,player as Player,ClipContext.Fluid.NONE)
+            if (selected == blockHitResult.blockPos) return
+            selected = blockHitResult.blockPos
+            val SZ = SelectionZoneRenderer(
+                Vec3i(selectionStart!!.x, selectionStart!!.y, selectionStart!!.z).toJOMLF(),
+                Vec3i(selected!!.x, selected!!.y, selected!!.z).toJOMLF(),
+                Color.GREEN
+            )
+            selectionZone = Renderer.addRender(SZ)
         }
     }
 }

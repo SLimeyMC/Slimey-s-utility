@@ -3,31 +3,30 @@ package io.github.priestoffern.vs_ship_assembler.rendering
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
 import com.mojang.math.Matrix4f
-import de.m_marvin.univec.impl.Vec3d
+import io.github.priestoffern.vs_ship_assembler.util.iterateCorners
+import io.github.priestoffern.vs_ship_assembler.util.toFloat
 import net.minecraft.client.Camera
 import net.minecraft.client.renderer.GameRenderer
+import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
+import org.valkyrienskies.mod.common.util.toJOML
 import java.awt.Color
 class SelectionZoneRenderer(override var id: Long) : RenderingData {
-    var point0 = Vec3d()
-    var point1 = Vec3d()
-    var color: Color = Color(0)
-    constructor(
-                point0: Vec3d,
-                point1: Vec3d,
-                color: Color,
-    ): this(0) {
-        this.point0 = point0
-        this.point1 = point1
-        this.color = color
+    var min = Vector3f()
+    var max = Vector3f()
+    var borderColor: Color = Color(0)
+    override var type: String = "Ship_Assembler_Selection_Zone"
+    constructor(point0: Vector3f, point1: Vector3f, borderColor: Color): this(0) {
+        this.min = point0
+        this.max = point1
+        this.borderColor = borderColor
     }
 
     override fun renderData(poseStack: PoseStack, camera: Camera) {
-
-
         val tesselator = Tesselator.getInstance()
-        val vBuffer = tesselator.builder
+        val builder = tesselator.builder
 
+        // Enable depth testing for proper line rendering
         RenderSystem.enableDepthTest()
         RenderSystem.depthFunc(GL11.GL_LEQUAL)
         RenderSystem.depthMask(true)
@@ -37,79 +36,39 @@ class SelectionZoneRenderer(override var id: Long) : RenderingData {
 
         val light = Int.MAX_VALUE
 
-        vBuffer.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR_LIGHTMAP)
+        builder.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR_LIGHTMAP)
 
         poseStack.pushPose()
 
-        val cameraPos = camera.position
+        val cameraPos = camera.position.toJOML().toFloat()
 
-        val Add1 = Vec3d(if (point0.x>=point1.x) 1.0 else 0.0, if (point0.y>=point1.y) 1.0 else 0.0, if (point0.z>=point1.z) 1.0 else 0.0)
-        val Add2 = Vec3d(if (point1.x>point0.x) 1.0 else 0.0, if (point1.y>point0.y) 1.0 else 0.0, if (point1.z>point0.z) 1.0 else 0.0)
+        val offsetMin = Vector3f(if (min.x >= max.x) 1.0f else 0.0f, if (min.y >= max.y) 1.0f else 0.0f, if (min.z >= max.z) 1.0f else 0.0f)
+        val offsetMax = Vector3f(if (max.x > min.x) 1.0f else 0.0f, if (max.y > min.y) 1.0f else 0.0f, if (max.z > min.z) 1.0f else 0.0f)
 
-        val tpos1 = Vec3d(point0.x-cameraPos.x,point0.y-cameraPos.y,point0.z-cameraPos.z).add(Add1)
-        val tpos2 = Vec3d(point1.x-cameraPos.x,point1.y-cameraPos.y,point1.z-cameraPos.z).add(Add2)
+        val transformedPointMin = min.sub(cameraPos).add(offsetMin)
+        val transformedPointMax = max.sub(cameraPos).add(offsetMax)
 
         val matrix = poseStack.last().pose()
-        makeBox(
-            vBuffer, matrix,
-            color.red, color.green, color.blue, color.alpha, light,
-            tpos1, tpos2
-        )
+
+        drawBoundingBox(builder, matrix, borderColor.rgb, light, transformedPointMin, transformedPointMax)
 
         tesselator.end()
 
         poseStack.popPose()
-
-
     }
-
-    fun tof(n: Double) = n.toFloat()
-    fun makeBox(buf: VertexConsumer, matrix: Matrix4f,
-                    r: Int, g: Int, b: Int, a: Int, lightmapUV: Int,
-                    A: Vec3d, B:Vec3d
+    fun drawBoundingBox(buf: VertexConsumer, matrix: Matrix4f,
+                    colorARGB: Int, lightmapUV: Int,
+                    min: Vector3f, max:Vector3f
     ) {
-        val addVertex = { x: Double, y: Double, z: Double ->
-            buf.vertex(matrix, x.toFloat(), y.toFloat(), z.toFloat()).color(r, g, b, a).uv2(lightmapUV).endVertex()
+        val addVertex = { position: Vector3f ->
+            buf.vertex(matrix, position.x, position.y, position.z).color(colorARGB).uv2(lightmapUV).endVertex()
         }
-        buf.vertex(matrix,  tof(A.x), tof(A.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(A.x), tof(A.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-        buf.vertex(matrix,  tof(A.x), tof(A.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(A.x), tof(B.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-        buf.vertex(matrix,  tof(A.x), tof(A.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(B.x), tof(A.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-
-        buf.vertex(matrix,  tof(A.x), tof(A.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(B.x), tof(A.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-        buf.vertex(matrix,  tof(A.x), tof(A.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(A.x), tof(B.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-        buf.vertex(matrix,  tof(A.x), tof(B.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(B.x), tof(B.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-
-        buf.vertex(matrix,  tof(A.x), tof(B.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(A.x), tof(B.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-        buf.vertex(matrix,  tof(A.x), tof(B.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(B.x), tof(B.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-        buf.vertex(matrix,  tof(B.x), tof(B.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(B.x), tof(B.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-
-        buf.vertex(matrix,  tof(B.x), tof(A.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(B.x), tof(B.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-        buf.vertex(matrix,  tof(B.x), tof(A.y), tof(A.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(B.x), tof(A.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-
-        buf.vertex(matrix,  tof(B.x), tof(A.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
-        buf.vertex(matrix,  tof(B.x), tof(B.y), tof(B.z)).color(r, g, b, a).uv2(lightmapUV).endVertex()
+        for (startCorner in iterateCorners(min, max)) {
+            for (endCorner in iterateCorners(min, max)) {
+                if (startCorner == endCorner) continue
+                addVertex(startCorner)
+                addVertex(endCorner)
+            }
+        }
     }
-
-
 }

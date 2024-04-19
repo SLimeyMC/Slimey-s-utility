@@ -6,7 +6,6 @@ import net.minecraft.client.Camera
 fun renderData(poseStack: PoseStack, camera: Camera) {
 
     for (data in Renderer.toRender) {
-        if (data!=null) data.renderData(poseStack, camera)
-
+        data.renderData(poseStack, camera)
     }
 }

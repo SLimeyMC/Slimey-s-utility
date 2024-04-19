@@ -12,7 +12,7 @@ import org.valkyrienskies.core.api.ships.properties.ShipId
 import org.valkyrienskies.mod.common.world.clipIncludeShips
 
 open class RaycastableItem(properties: Properties) : Item(properties) {
-    protected fun raycast(level: Level, player: Player, fluidMode: ClipContext.Fluid): BlockHitResult? {
+    protected fun raycast(level: Level, player: Player, fluidMode: ClipContext.Fluid): BlockHitResult {
         val yawRad: Float = player.yRot * Mth.DEG_TO_RAD
         val pitchRad: Float = player.xRot * Mth.DEG_TO_RAD
         val eyePosition: Vec3 = player.eyePosition
@@ -26,7 +26,7 @@ open class RaycastableItem(properties: Properties) : Item(properties) {
         return level.clip(ClipContext(eyePosition, rayEnd, ClipContext.Block.OUTLINE, fluidMode, player))
     }
 
-    protected fun raycastIncludeShips(level: Level, player: Player, fluidMode: ClipContext.Fluid, transformHit: Boolean = true, shipToSkip: ShipId?): BlockHitResult? {
+    protected fun raycastIncludeShips(level: Level, player: Player, fluidMode: ClipContext.Fluid, transformHit: Boolean = true, shipToSkip: ShipId? = null): BlockHitResult {
         val yawRad: Float = player.yRot * Mth.DEG_TO_RAD
         val pitchRad: Float = player.xRot * Mth.DEG_TO_RAD
         val eyePosition: Vec3 = player.eyePosition
