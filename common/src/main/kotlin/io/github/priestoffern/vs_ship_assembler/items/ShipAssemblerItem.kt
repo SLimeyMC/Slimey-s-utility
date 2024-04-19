@@ -134,7 +134,7 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
                     Color.GREEN
                 )
                 selectionZone = Renderer.addRender(SZ)
-            } else {
+            }// else {
 //                val blockHitResult = level.clipIncludeShips(clipFromPlayer(level, player as Player, ClipContext.Fluid.NONE),
 //                    true, parentShip.id)
 //                if (selected == blockHitResult.blockPos) return
@@ -145,8 +145,8 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
 //                    Color.GREEN
 //                )
 //                selectionZone = Renderer.addRender(SZ)
-                return
-            }
+//                return
+//            }
         }
     }
 }

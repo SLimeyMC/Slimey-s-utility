@@ -63,12 +63,40 @@ class SelectionZoneRenderer(override var id: Long) : RenderingData {
         val addVertex = { position: Vector3f ->
             buf.vertex(matrix, position.x, position.y, position.z).color(colorARGB).uv2(lightmapUV).endVertex()
         }
-        for (startCorner in iterateCorners(min, max)) {
-            for (endCorner in iterateCorners(min, max)) {
-                if (startCorner == endCorner) continue
-                addVertex(startCorner)
-                addVertex(endCorner)
-            }
-        }
+        addVertex(Vector3f(min.x, min.y, min.z))
+        addVertex(Vector3f(min.x, min.y, max.z))
+
+        addVertex(Vector3f(min.x, min.y, min.z))
+        addVertex(Vector3f(min.x, max.y, min.z))
+
+        addVertex(Vector3f(min.x, min.y, min.z))
+        addVertex(Vector3f(max.x, min.y, min.z))
+
+        addVertex(Vector3f(min.x, min.y, max.z))
+        addVertex(Vector3f(min.x, max.y, max.z))
+
+        addVertex(Vector3f(min.x, min.y, max.z))
+        addVertex(Vector3f(max.x, min.y, max.z))
+
+        addVertex(Vector3f(min.x, max.y, min.z))
+        addVertex(Vector3f(max.x, max.y, min.z))
+
+        addVertex(Vector3f(min.x, max.y, min.z))
+        addVertex(Vector3f(min.x, max.y, max.z))
+
+        addVertex(Vector3f(max.x, min.y, min.z))
+        addVertex(Vector3f(max.x, max.y, min.z))
+
+        addVertex(Vector3f(max.x, min.y, min.z))
+        addVertex(Vector3f(max.x, min.y, max.z))
+
+        addVertex(Vector3f(min.x, max.y, max.z))
+        addVertex(Vector3f(max.x, max.y, max.z))
+
+        addVertex(Vector3f(max.x, min.y, max.z))
+        addVertex(Vector3f(max.x, max.y, max.z))
+
+        addVertex(Vector3f(max.x, max.y, min.z))
+        addVertex(Vector3f(max.x, max.y, max.z))
     }
 }
