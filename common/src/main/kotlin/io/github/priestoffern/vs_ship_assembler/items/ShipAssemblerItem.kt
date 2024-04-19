@@ -8,6 +8,7 @@ import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
 import io.github.priestoffern.vs_ship_assembler.util.toFloat
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.Vec3i
 import net.minecraft.network.chat.TextComponent
 import net.minecraft.server.level.ServerLevel
@@ -19,11 +20,17 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.SoundType
+import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3d
 import org.joml.Vector3f
+import org.valkyrienskies.core.api.ships.LoadedShip
+import org.valkyrienskies.core.apigame.ships.LoadedShipCore
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
+import org.valkyrienskies.mod.common.getShipManagingPos
+import org.valkyrienskies.mod.common.getShipObjectManagingPos
 import org.valkyrienskies.mod.common.util.toJOMLF
+import org.valkyrienskies.mod.common.world.clipIncludeShips
 import org.valkyrienskies.mod.util.logger
 import java.awt.Color
 import java.lang.Math.*
@@ -38,11 +45,8 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
     private var selected: BlockPos? = null
 
     override fun use(level: Level, player: Player, interactionHand: InteractionHand): InteractionResultHolder<ItemStack> {
-        val clipResult = raycastIncludeShips(
-            level,
-            player,
-            ClipContext.Fluid.NONE
-        )
+        val clipResult = level.clip(clipFromPlayer(level, player, ClipContext.Fluid.NONE))
+            //level.clipIncludeShips(clipFromPlayer(level, player, ClipContext.Fluid.NONE))
         logger("${player.name} hit ${clipResult.blockPos}")
         //player.sendMessage(TextComponent(" ${clipResult.blockPos}"), Util.NIL_UUID)
         player.playSound(SoundType.AMETHYST_CLUSTER.placeSound, 1F, 1F)
@@ -119,15 +123,30 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
             if (selectionZone != null) Renderer.removeRender(selectionZone!!)
             selectionZone = null
 
-            val blockHitResult = raycast(level,player as Player,ClipContext.Fluid.NONE)
-            if (selected == blockHitResult.blockPos) return
-            selected = blockHitResult.blockPos
-            val SZ = SelectionZoneRenderer(
-                Vec3i(selectionStart!!.x, selectionStart!!.y, selectionStart!!.z).toJOMLF(),
-                Vec3i(selected!!.x, selected!!.y, selected!!.z).toJOMLF(),
-                Color.GREEN
-            )
-            selectionZone = Renderer.addRender(SZ)
+            val parentShip = level.getShipManagingPos(selectionStart!!)
+            if (parentShip == null) {
+                val blockHitResult = level.clip(clipFromPlayer(level, player as Player, ClipContext.Fluid.NONE))
+                if (selected == blockHitResult.blockPos) return
+                selected = blockHitResult.blockPos
+                val SZ = SelectionZoneRenderer(
+                    Vec3i(selectionStart!!.x, selectionStart!!.y, selectionStart!!.z).toJOMLF(),
+                    Vec3i(selected!!.x, selected!!.y, selected!!.z).toJOMLF(),
+                    Color.GREEN
+                )
+                selectionZone = Renderer.addRender(SZ)
+            } else {
+//                val blockHitResult = level.clipIncludeShips(clipFromPlayer(level, player as Player, ClipContext.Fluid.NONE),
+//                    true, parentShip.id)
+//                if (selected == blockHitResult.blockPos) return
+//                selected = blockHitResult.blockPos
+//                val SZ = SelectionZoneRenderer(
+//                    Vector3f(selectionStart!!.x, selectionStart!!.y, selectionStart!!.z).toJOMLF(),
+//                    Vec3i(selected!!.x, selected!!.y, selected!!.z).toJOMLF(),
+//                    Color.GREEN
+//                )
+//                selectionZone = Renderer.addRender(SZ)
+                return
+            }
         }
     }
 }
