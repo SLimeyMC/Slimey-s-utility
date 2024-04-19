@@ -19,6 +19,7 @@ import org.valkyrienskies.mod.common.util.toBlockPos
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import org.valkyrienskies.mod.common.util.toMinecraft
+import org.valkyrienskies.mod.common.vsCore
 import org.valkyrienskies.mod.common.world.clipIncludeShips
 import java.util.*
 
@@ -110,9 +111,8 @@ fun scaleShip(level: ServerLevel, ship: ServerShip, scale: Double) {
 
     shipData.velocity = Optional.of(pushDistance.mul(scale).sub(pushDistance))
 
-    scaleShip(level, ship, scale)
-    level.server.shipObjectWorld
-        .teleportShip(ship, shipData.toShipTeleportData())
+    vsCore.scaleShip(level.shipObjectWorld, ship, scale)
+    //teleportShip(level, ship, shipData)
 }
 
 fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPos {
