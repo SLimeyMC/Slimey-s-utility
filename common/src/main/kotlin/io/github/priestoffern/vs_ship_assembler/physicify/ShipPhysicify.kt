@@ -77,6 +77,11 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double)
         level.setBlock(shipBlockPos, Blocks.AIR.defaultBlockState(), 3)
     }
 
+    if (ship.inertiaData.mass == 0.0) {
+        vsCore.deleteShips(level.shipObjectWorld, listOf(ship))
+        LOGGER.severe("Created ship has mass of 0! Aborting the operation and deleting the ship!")
+    }
+
     teleportShip(level, ship, shipData)
 
     return ship
