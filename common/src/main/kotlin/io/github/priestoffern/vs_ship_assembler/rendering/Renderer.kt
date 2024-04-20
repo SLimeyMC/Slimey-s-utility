@@ -8,10 +8,11 @@ import net.minecraft.client.Minecraft
 
 import org.valkyrienskies.mod.common.shipObjectWorld
 
+
 object Renderer {
     var CurrentId:Long = 0;
     val toRender = mutableListOf<RenderingData>()
-
+    val toRemove = mutableListOf<RenderingData>()
     fun addRender(renderData: RenderingData): RenderingData {
         renderData.id = CurrentId;
         CurrentId++
@@ -21,7 +22,8 @@ object Renderer {
     }
 
     fun removeRender(renderData: RenderingData) {
-        toRender.remove(renderData);
+        toRemove.add(renderData);
+
     }
 }
 
