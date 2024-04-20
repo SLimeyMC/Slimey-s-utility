@@ -71,7 +71,7 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    include(api  "com.github.M-Marvin:LIBRARY-UnifiedVectors:$univec_version")
+    //include(api  "com.github.M-Marvin:LIBRARY-UnifiedVectors:$univec_version")
 }
 
 processResources {
