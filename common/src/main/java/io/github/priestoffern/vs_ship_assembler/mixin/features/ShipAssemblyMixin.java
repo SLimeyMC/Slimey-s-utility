@@ -21,6 +21,6 @@ public final class ShipAssemblyMixin {
     // and create duplication glitch on create stuff
     @Inject(method = "createNewShipWithBlocks", at = @At("HEAD"), cancellable = true)
     private static void onCreateNewShipWithBlocks(@NotNull BlockPos centerBlock, @NotNull DenseBlockPosSet blocks, @NotNull ServerLevel level, CallbackInfoReturnable<ServerShip> cir) {
-        cir.setReturnValue((ServerShip) physicifyBlocks(level, blocks,1.0));
+        cir.setReturnValue(physicifyBlocks(level, blocks,1.0));
     }
 }
