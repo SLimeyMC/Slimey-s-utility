@@ -6,6 +6,12 @@ loom {
     accessWidenerPath = file("src/main/resources/vs_ship_assembler.accesswidener")
 }
 
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
