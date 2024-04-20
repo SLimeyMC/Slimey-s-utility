@@ -1,5 +1,6 @@
 package io.github.priestoffern.vs_ship_assembler.physicify
 
+import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod.LOGGER
 import io.github.priestoffern.vs_ship_assembler.ship.ShipData
 import io.github.priestoffern.vs_ship_assembler.util.*
 import net.minecraft.core.BlockPos
@@ -12,14 +13,11 @@ import org.joml.*
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
-import org.valkyrienskies.mod.common.dimensionId
-import org.valkyrienskies.mod.common.getShipManagingPos
-import org.valkyrienskies.mod.common.shipObjectWorld
+import org.valkyrienskies.mod.common.*
 import org.valkyrienskies.mod.common.util.toBlockPos
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import org.valkyrienskies.mod.common.util.toMinecraft
-import org.valkyrienskies.mod.common.vsCore
 import org.valkyrienskies.mod.common.world.clipIncludeShips
 import java.util.*
 
@@ -44,10 +42,10 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double)
         }
     }
 
-    // Create new contraption at center of bounds
+    // Create new ship at center of bounds
     val shipWorldPos: Vector3d = structureCornerMin.toJOMLD().add(structureCornerMax.toJOMLD()).div(2.0)
     val shipData = ShipData(Quaterniond(0.0, 0.0, 0.0, 1.0), shipWorldPos, null)
-    val shipBlockPos: BlockPos = createShipAt(level, shipData, scale)
+    val shipBlockPos: BlockPos = createShipAtShipData(level, shipData)
     val ship: ServerShip = level.getShipManagingPos(shipBlockPos)!!
 
     // Make a class to help with moving out the block
@@ -120,7 +118,7 @@ fun scaleShip(level: ServerLevel, ship: ServerShip, scale: Double) {
     //teleportShip(level, ship, shipData)
 }
 
-fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPos {
+fun createShipAtShipData(level: ServerLevel, shipData: ShipData): BlockPos {
 
     // Get parent ship (if existing)
     val parentShip: Ship? =
@@ -131,14 +129,13 @@ fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPo
         shipData.toWorldPosition(parentShip.transform)
     }
 
-    // Create new contraption
+    // Create new ship
     val dimensionId: String = level.dimensionId
-    val newShip: Ship = level.server.shipObjectWorld
-        .createNewShipAtBlock(shipData.position.floorToVector3i(), false, scale, dimensionId)
+    val newShip: ServerShip = level.shipObjectWorld
+        .createNewShipAtBlock(shipData.position.floorToJOMLI(), false, shipData.scale, dimensionId)
 
     // Stone for safety reasons
-    val t = Vector3d()
-    val centerBlockPos = BlockPos(newShip.shipAABB!!.center(t).toMinecraft())
+    val centerBlockPos = shipData.position.floorToJOMLI().toBlockPos()
     level.setBlock(centerBlockPos, Blocks.STONE.defaultBlockState(), 3)
 
     // Teleport ship to final destination
