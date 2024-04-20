@@ -1,23 +1,24 @@
 package io.github.priestoffern.vs_ship_assembler.physicify
 
 import io.github.priestoffern.vs_ship_assembler.ship.ShipData
-import io.github.priestoffern.vs_ship_assembler.util.*
+import io.github.priestoffern.vs_ship_assembler.util.RelocateLevel
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import org.joml.Math
-import org.joml.*
+import org.joml.Vector3d
+import org.joml.Vector3i
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
+import org.valkyrienskies.core.impl.game.ShipTeleportDataImpl
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
 import org.valkyrienskies.mod.common.dimensionId
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.shipObjectWorld
 import org.valkyrienskies.mod.common.util.toBlockPos
 import org.valkyrienskies.mod.common.util.toJOML
-import org.valkyrienskies.mod.common.util.toJOMLD
 import org.valkyrienskies.mod.common.util.toMinecraft
 import org.valkyrienskies.mod.common.vsCore
 import org.valkyrienskies.mod.common.world.clipIncludeShips
@@ -45,10 +46,19 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double)
     }
 
     // Create new contraption at center of bounds
-    val shipWorldPos: Vector3d = structureCornerMin.toJOMLD().add(structureCornerMax.toJOMLD()).div(2.0)
-    val shipData = ShipData(Quaterniond(0.0, 0.0, 0.0, 1.0), shipWorldPos, null)
-    val shipBlockPos: BlockPos = createShipAt(level, shipData, scale)
+    val shipWorldPos: Vector3i = structureCornerMin.toJOML().add(structureCornerMax.toJOML()).div(2)
+
+
+
+    val newShip: Ship = (level as ServerLevel).server.shipObjectWorld
+        .createNewShipAtBlock(shipWorldPos, false, scale, level.dimensionId)
+
+    // Stone for safety reasons
+
+    val ShipPos = newShip.worldToShip.transformPosition(Vector3d(shipWorldPos.x.toDouble(),shipWorldPos.y.toDouble(),shipWorldPos.z.toDouble()))
+    val shipBlockPos = BlockPos(shipWorldPos.x.toInt(),shipWorldPos.y.toInt(),shipWorldPos.z.toInt())
     val ship: ServerShip = level.getShipManagingPos(shipBlockPos)!!
+
 
     // Make a class to help with moving out the block
     val relocateLevel = RelocateLevel(level)
@@ -77,7 +87,9 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double)
         level.setBlock(shipBlockPos, Blocks.AIR.defaultBlockState(), 3)
     }
 
-    teleportShip(level, ship, shipData)
+
+    (level as ServerLevel).server.shipObjectWorld
+        .teleportShip(newShip as ServerShip, ShipTeleportDataImpl(Vector3d(shipWorldPos.x.toDouble(),shipWorldPos.y.toDouble(),shipWorldPos.z.toDouble())))
 
     return ship
 }
@@ -115,32 +127,6 @@ fun scaleShip(level: ServerLevel, ship: ServerShip, scale: Double) {
     //teleportShip(level, ship, shipData)
 }
 
-fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPos {
-
-    // Get parent ship (if existing)
-    val parentShip: Ship? =
-        level.getShipManagingPos(shipData.position)
-
-    // Apply parent ship translation if available
-    if (parentShip != null) {
-        shipData.toWorldPosition(parentShip.transform)
-    }
-
-    // Create new contraption
-    val dimensionId: String = level.dimensionId
-    val newShip: Ship = level.server.shipObjectWorld
-        .createNewShipAtBlock(shipData.position.floorToVector3i(), false, scale, dimensionId)
-
-    // Stone for safety reasons
-    val t = Vector3d()
-    val centerBlockPos = BlockPos(newShip.shipAABB!!.center(t).toMinecraft())
-    level.setBlock(centerBlockPos, Blocks.STONE.defaultBlockState(), 3)
-
-    // Teleport ship to final destination
-    level.server.shipObjectWorld
-        .teleportShip(newShip as ServerShip, shipData.toShipTeleportData())
-    return centerBlockPos
-}
 
 private fun teleportShip(level: ServerLevel, ship: ServerShip, shipData: ShipData) {
     level.server.shipObjectWorld
