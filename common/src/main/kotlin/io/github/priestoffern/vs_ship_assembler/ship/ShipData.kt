@@ -13,10 +13,10 @@ import java.util.*
 class ShipData {
     var orientation: Quaterniond
     var position: Vector3d
-    var dimension: Optional<String>
-    var velocity: Optional<Vector3d> = Optional.empty<Vector3d>()
-    var omega: Optional<Vector3d> = Optional.empty<Vector3d>()
-    var scale = Optional.empty<Double>()
+    var dimension: String? = null
+    var velocity = Vector3d()
+    var omega = Vector3d()
+    var scale = 0.0
 
     constructor(
         orientation: Quaterniond,
@@ -24,20 +24,20 @@ class ShipData {
         dimension: String?,
         velocity: Vector3d?,
         omega: Vector3d?,
-        scalarScale: Double?
+        scale: Double?
     ) {
         this.orientation = orientation
         this.position = position
-        this.dimension = Optional.ofNullable(dimension)
-        this.velocity = Optional.ofNullable<Vector3d>(velocity)
-        this.omega = Optional.ofNullable<Vector3d>(omega)
-        this.scale = Optional.ofNullable<Double>(scalarScale)
+        if(dimension != null) this.dimension = dimension
+        if(velocity != null) this.velocity = velocity
+        if(omega != null) this.omega = omega
+        if(scale != null) this.scale = scale
     }
 
     constructor(orientation: Quaterniond, position: Vector3d, dimension: String?) {
         this.orientation = orientation
         this.position = position
-        this.dimension = Optional.ofNullable(dimension)
+        if(dimension != null) this.dimension = dimension
     }
 
     constructor(orientation: Quaterniondc, position: Vector3dc, dimension: String?) : this(
@@ -48,8 +48,8 @@ class ShipData {
     constructor(transform: ShipTransform) : this(transform.shipToWorldRotation, transform.positionInWorld, null)
 
     constructor(ship: Ship) : this(ship.transform) {
-        velocity = Optional.of(Vector3d(ship.velocity))
-        omega = Optional.of(Vector3d(ship.omega))
+        this.velocity = Vector3d(ship.velocity)
+        this.omega = Vector3d(ship.omega)
     }
 
     constructor(ship: ServerShip, useGeometricCenter: Boolean) : this(ship) {
@@ -68,10 +68,10 @@ class ShipData {
     constructor(position: ShipData) : this(
         position.orientation,
         position.position,
-        if (position.dimension.isPresent) position.dimension.get() else null,
-        if (position.velocity.isPresent) position.velocity.get() else null,
-        if (position.omega.isPresent) position.omega.get() else null,
-        if (position.scale.isPresent) position.scale.get() else null
+        if (position.dimension == null) position.dimension else null,
+        position.velocity,
+        position.omega,
+        position.scale
     )
 
     // Use Geometric center idk
@@ -92,10 +92,10 @@ class ShipData {
         return ShipTeleportDataImpl(
             position,
             orientation,
-            (if (velocity.isPresent) velocity else Vector3d()) as Vector3dc,
-            (if (omega.isPresent) omega else Vector3d()) as Vector3dc,
-            if (dimension.isPresent) dimension.get() else null,
-            if (scale.isPresent) scale.get() else null
+            velocity,
+            omega,
+            if (dimension == null) dimension else null,
+            scale
         )
     }
 
