@@ -99,7 +99,7 @@ fun scaleShip(level: ServerLevel, ship: ServerShip, scale: Double) {
 
     val shipPosition = shipData.position.toMinecraft()
 
-    shipData.scale = Optional.of(ship.transform.shipToWorldScaling.mul(scale, Vector3d()).x)
+    shipData.scale = ship.transform.shipToWorldScaling.mul(scale, Vector3d()).x
 
     val raycastTo = fun(position: Vec3): Double {
         return level.clipIncludeShips(
@@ -114,7 +114,7 @@ fun scaleShip(level: ServerLevel, ship: ServerShip, scale: Double) {
         raycastTo(rayZEnd) - raycastTo(rayZStart)
     )
 
-    shipData.velocity = Optional.of(pushDistance.mul(scale).sub(pushDistance))
+    shipData.velocity = pushDistance.mul(scale).sub(pushDistance)
 
     vsCore.scaleShip(level.shipObjectWorld, ship, scale)
     //teleportShip(level, ship, shipData)
@@ -143,7 +143,7 @@ fun createShipAt(level: ServerLevel, shipData: ShipData, scale: Double): BlockPo
 
     // Teleport ship to final destination
     level.server.shipObjectWorld
-        .teleportShip(newShip as ServerShip, shipData.toShipTeleportData())
+        .teleportShip(newShip, shipData.toShipTeleportData())
     return centerBlockPos
 }
 
