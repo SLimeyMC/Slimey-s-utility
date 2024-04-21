@@ -71,25 +71,23 @@ repositories {
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:$forge_version"
+    forge libs.forge
 
     // Architectury API
-    include(modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}")
+    modApi libs.forge.architectury
 
     // Valkyrien Skies 2
-    modApi("org.valkyrienskies:valkyrienskies-118-forge:$vs2_version") { transitive = false }
+    modApi(libs.forge.valkyrienskies) { transitive = false }
 
     // VS Core
-    implementation("org.valkyrienskies.core:api:$vs_core_version")
-    implementation("org.valkyrienskies.core:api-game:$vs_core_version")
-    implementation("org.valkyrienskies.core:util:$vs_core_version")
-    implementation("org.valkyrienskies.core:impl:$vs_core_version")
+    implementation(libs.bundles.core.valkyrienskies)
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     // Kotlin for Forge
-    implementation "thedarkcolour:kotlinforforge:$forge_kotlin_version"
+    implementation libs.forge.kotlin
+    modImplementation libs.forge.kubejs
     //include(forgeRuntimeLibrary  "com.github.M-Marvin:LIBRARY-UnifiedVectors:$univec_version")
 
 }

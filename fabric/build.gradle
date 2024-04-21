@@ -52,26 +52,30 @@ repositories {
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modImplementation("net.fabricmc:fabric-language-kotlin:1.10.10+kotlin.1.9.10")
+    modImplementation libs.fabric
+    modApi libs.fabric.api
+    modImplementation(libs.fabric.kotlin)
 
     // Architectury API
-    include(modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}")
+    modApi(libs.fabric.architectury)
 
     // Mod menu
-    modImplementation("com.terraformersmc:modmenu:3.2.3")
-    modImplementation("me.shedaniel.cloth:cloth-config:${cloth_config_version}")
+    modImplementation(libs.fabric.modmenu)
+    modImplementation(libs.fabric.clothconfig) {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 
     // Valkyrien Skies 2
-    modApi("org.valkyrienskies:valkyrienskies-118-fabric:${rootProject.vs2_version}")
+    modApi(libs.fabric.valkyrienskies) {
+        exclude(group: "com.simibubi.create")
+    }
+
+    modImplementation(libs.fabric.kubejs)
 
     modRuntimeOnly("org.valkyrienskies.eureka:eureka-fabric:1.1.1-beta.2+682a896ad8")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
-
-    //include(api  "com.github.M-Marvin:LIBRARY-UnifiedVectors:$univec_version")
 }
 
 processResources {
