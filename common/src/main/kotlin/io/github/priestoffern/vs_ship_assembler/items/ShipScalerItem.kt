@@ -1,5 +1,6 @@
 package io.github.priestoffern.vs_ship_assembler.items
 
+import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod.LOGGER
 import io.github.priestoffern.vs_ship_assembler.physicify.scaleShip
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
@@ -18,13 +19,12 @@ import org.valkyrienskies.mod.util.logger
 class ShipScalerItem(properties: Properties) : ShipSelectingItem(properties) {
     override fun use(level: Level, player: Player, interactionHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val clipResult = level.clipIncludeShips(clipFromPlayer(level, player, ClipContext.Fluid.NONE))
-        logger("${player.name} hit ${clipResult.blockPos}")
+        LOGGER.info("${player.name} hit ${clipResult.blockPos}")
         player.playSound(SoundType.AMETHYST_CLUSTER.placeSound, 1F, 1F)
 
-        var ship = level.getShipManagingPos(clipResult.blockPos)
-        if (ship != null) {
+        if (selectedShip != null) {
             var newScale = 1.0
-            scaleShip(level as ServerLevel, ship as ServerShip, newScale)
+            scaleShip(level as ServerLevel, selectedShip as ServerShip, newScale)
         }
 
         return super.use(level, player, interactionHand)

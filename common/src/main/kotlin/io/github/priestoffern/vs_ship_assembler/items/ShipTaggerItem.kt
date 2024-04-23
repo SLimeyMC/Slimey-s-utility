@@ -21,14 +21,12 @@ import java.awt.Color
 
 class ShipTaggerItem(properties: Properties) : ShipSelectingItem(properties) {
     override fun use(level: Level, player: Player, interactionHand: InteractionHand): InteractionResultHolder<ItemStack> {
-        val clipResult = level.clipIncludeShips(clipFromPlayer(level, player, ClipContext.Fluid.NONE))
-        logger("${player.name} hit ${clipResult.blockPos}")
+        logger("${player.name} hit ${selectedShip?.transform?.positionInWorld}")
         player.playSound(SoundType.AMETHYST_CLUSTER.placeSound, 1F, 1F)
 
-        var ship = level.getShipManagingPos(clipResult.blockPos)
-        if (ship != null) {
+        if (selectedShip != null) {
             var newName = ""
-            vsCore.renameShip(ship as ServerShip, newName)
+            vsCore.renameShip(selectedShip as ServerShip, newName)
         }
 
         return super.use(level, player, interactionHand)
