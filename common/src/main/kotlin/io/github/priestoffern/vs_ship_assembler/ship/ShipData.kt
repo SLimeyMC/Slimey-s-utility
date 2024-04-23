@@ -107,6 +107,7 @@ class ShipData {
         position = transformPosition(transform, position)
     }
 
+
     private fun transformPosition(ship: ShipTransform, pos: Vector3d): Vector3d {
         return ship.shipToWorld.transformPosition(pos)
     }
