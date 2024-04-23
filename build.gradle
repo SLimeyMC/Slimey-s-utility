@@ -70,13 +70,6 @@ subprojects {
             // Output xml reports
             xml.required = true
         }
-        maven {
-            // saps.dev Maven (KubeJS and Rhino)
-            url = "https://maven.saps.dev/releases"
-            content {
-                includeGroup "dev.latvian.mods"
-            }
-        }
     }
 
     // configure ktlint
@@ -116,6 +109,13 @@ allprojects {
             }
         }
         maven { url = "https://api.modrinth.com/maven" }
+        maven {
+            // saps.dev Maven (KubeJS and Rhino)
+            url = "https://maven.saps.dev/releases"
+            content {
+                includeGroup "dev.latvian.mods"
+            }
+        }
     }
 
     tasks.withType(JavaCompile) {
