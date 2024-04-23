@@ -87,6 +87,9 @@ dependencies {
 
     // Kotlin for Forge
     implementation libs.forge.kotlin
+
+    modImplementation libs.forge.obsidianui
+
     modImplementation libs.forge.kubejs
     //include(forgeRuntimeLibrary  "com.github.M-Marvin:LIBRARY-UnifiedVectors:$univec_version")
 

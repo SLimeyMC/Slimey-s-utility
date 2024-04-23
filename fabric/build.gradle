@@ -65,10 +65,14 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
+    modRuntimeOnly(libs.mixinextras)
+
     // Valkyrien Skies 2
-    modApi(libs.fabric.valkyrienskies) {
-        exclude(group: "com.simibubi.create")
-    }
+    modApi(libs.fabric.valkyrienskies) //{
+//        exclude(group: "com.simibubi.create")
+//    }
+
+    modImplementation(libs.fabric.obsidianui)
 
     modImplementation(libs.fabric.kubejs)
 

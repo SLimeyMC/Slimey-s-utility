@@ -54,6 +54,8 @@ dependencies {
     // VS Core
     compileOnly(libs.bundles.core.valkyrienskies)
 
+    modImplementation(libs.fabric.obsidianui)
+
     modImplementation(libs.common.kubejs)
 
     //api  "com.github.M-Marvin:LIBRARY-UnifiedVectors:$univec_version"

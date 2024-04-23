@@ -23,6 +23,9 @@ modmenu = "3.2.5"
 
 kubejs = "1802.5.5-build.569"
 
+obsidianui_fabric = "0.2.0+mc1.18.2-fabric"
+obsidianui_forge = "0.2.0+mc1.18.2-forge"
+
 valkyrienskies = "2.1.1-beta.6+8efd751c2d"
 valkyrienskies_core = "1.1.0+8a93383ce5"
 
@@ -56,10 +59,12 @@ core_valkyrienskies_apigame = { module = "org.valkyrienskies.core:api-game", ver
 core_valkyrienskies_util = { module = "org.valkyrienskies.core:util", version.ref = "valkyrienskies_core" }
 core_valkyrienskies_impl = { module = "org.valkyrienskies.core:impl", version.ref = "valkyrienskies_core" }
 
-# Depedency for the valkyrien skies that i have to add it myself
-mixinextras = { module = "com.github.LlamaLad7:MixinExtras", version = "0.1.1" }
-fabric_clothconfig = { module = "me.shedaniel.cloth:cloth-config-fabric", version = "6.4.90" }
+# Obsidian UI
+fabric_obsidianui = { module = "maven.modrinth:obsidianui", version.ref = "obsidianui_fabric" }
+forge_obsidianui = { module = "maven.modrinth:obsidianui", version.ref = "obsidianui_forge" }
 
+# Cloth COnfig and Modmenu (true)
+fabric_clothconfig = { module = "me.shedaniel.cloth:cloth-config-fabric", version = "6.4.90" }
 fabric_modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }
 
 # Kubejs
@@ -67,6 +72,8 @@ common_kubejs = { module = "dev.latvian.mods:kubejs", version.ref = "kubejs" }
 fabric_kubejs = { module = "dev.latvian.mods:kubejs-fabric", version.ref = "kubejs" }
 forge_kubejs = { module = "dev.latvian.mods:kubejs-forge", version.ref = "kubejs" }
 
+# Depedency for the valkyrien skies that i have to add it myself
+mixinextras = { module = "com.github.LlamaLad7:MixinExtras", version = "0.1.1" }
 
 [bundles]
 core_valkyrienskies = ["core_valkyrienskies_api", "core_valkyrienskies_apigame", "core_valkyrienskies_util", "core_valkyrienskies_impl"]
