@@ -1,14 +1,15 @@
 package io.github.priestoffern.vs_ship_assembler.items
 
+import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod
+import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod.LOGGER
+import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod.RENDER_TYPE
 import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerTags
 import io.github.priestoffern.vs_ship_assembler.physicify.physicifyBlocks
 import io.github.priestoffern.vs_ship_assembler.rendering.Renderer
 import io.github.priestoffern.vs_ship_assembler.rendering.RenderingData
 import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
-import io.github.priestoffern.vs_ship_assembler.util.toFloat
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.core.Vec3i
 import net.minecraft.network.chat.TextComponent
 import net.minecraft.server.level.ServerLevel
@@ -20,17 +21,9 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.SoundType
-import net.minecraft.world.phys.BlockHitResult
-import net.minecraft.world.phys.Vec3
-import org.joml.Vector3d
-import org.joml.Vector3f
-import org.valkyrienskies.core.api.ships.LoadedShip
-import org.valkyrienskies.core.apigame.ships.LoadedShipCore
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
 import org.valkyrienskies.mod.common.getShipManagingPos
-import org.valkyrienskies.mod.common.getShipObjectManagingPos
 import org.valkyrienskies.mod.common.util.toJOMLF
-import org.valkyrienskies.mod.common.world.clipIncludeShips
 import org.valkyrienskies.mod.util.logger
 import java.awt.Color
 import java.lang.Math.*
@@ -47,7 +40,7 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
     override fun use(level: Level, player: Player, interactionHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val clipResult = level.clip(clipFromPlayer(level, player, ClipContext.Fluid.NONE))
             //level.clipIncludeShips(clipFromPlayer(level, player, ClipContext.Fluid.NONE))
-        logger("${player.name} hit ${clipResult.blockPos}")
+        LOGGER.info("${player.name} hit ${clipResult.blockPos}")
         //player.sendMessage(TextComponent(" ${clipResult.blockPos}"), Util.NIL_UUID)
         player.playSound(SoundType.AMETHYST_CLUSTER.placeSound, 1F, 1F)
 
@@ -87,7 +80,7 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
             val zone = SelectionZoneRenderer(
                 Vec3i(selectionStart!!.x, selectionStart!!.y, selectionStart!!.z).toJOMLF(),
                 Vec3i(pos.x, pos.y, pos.z).toJOMLF(),
-                Color.GREEN
+                Color.GREEN, 0, RENDER_TYPE
             )
             selectionZone = Renderer.addRender(zone)
             return
@@ -131,7 +124,7 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
                 val SZ = SelectionZoneRenderer(
                     Vec3i(selectionStart!!.x, selectionStart!!.y, selectionStart!!.z).toJOMLF(),
                     Vec3i(selected!!.x, selected!!.y, selected!!.z).toJOMLF(),
-                    Color.GREEN
+                    Color.GREEN, 0, RENDER_TYPE
                 )
                 selectionZone = Renderer.addRender(SZ)
             }// else {

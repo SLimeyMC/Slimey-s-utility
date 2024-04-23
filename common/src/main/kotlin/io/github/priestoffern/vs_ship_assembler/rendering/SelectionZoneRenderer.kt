@@ -11,14 +11,13 @@ import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
 import org.valkyrienskies.mod.common.util.toJOML
 import java.awt.Color
-class SelectionZoneRenderer(override var id: Long) : RenderingData {
+class SelectionZoneRenderer(override var id: Long, override var type: String) : RenderingData {
     var min = Vector3f()
     var max = Vector3f()
-    var borderColor: Color = Color(0)
-    override var type: String = "Ship_Assembler_Selection_Zone"
-    constructor(point0: Vector3f, point1: Vector3f, borderColor: Color): this(0) {
-        this.min = point0
-        this.max = point1
+    private var borderColor: Color = Color.BLACK
+    constructor(min: Vector3f, max: Vector3f, borderColor: Color, id: Long, type: String) : this(id, type) {
+        this.min = min
+        this.max = max
         this.borderColor = borderColor
     }
 
