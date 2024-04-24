@@ -22,6 +22,6 @@ public final class ShipAssemblyMixin {
     @Inject(method = "createNewShipWithBlocks", at = @At("HEAD"), cancellable = true)
     private static void onCreateNewShipWithBlocks(@NotNull BlockPos centerBlock, @NotNull DenseBlockPosSet blocks, @NotNull ServerLevel level, CallbackInfoReturnable<ServerShip> cir) {
         // TODO configurable forbidden assemble tag and a boolean to check if none match it here
-        cir.setReturnValue(physicifyBlocks(level, blocks, 1.0));
+        cir.setReturnValue(physicifyBlocks(level, blocks, centerBlock, 1.0));
     }
 }

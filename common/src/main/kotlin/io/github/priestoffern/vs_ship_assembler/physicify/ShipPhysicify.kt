@@ -20,7 +20,10 @@ import org.valkyrienskies.mod.common.util.toJOMLD
 import org.valkyrienskies.mod.common.util.toMinecraft
 import org.valkyrienskies.mod.common.world.clipIncludeShips
 
-fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double?): ServerShip {
+// FIXME dont use this rn, createShipAtShipData seems broken
+//  getShipManaging doesnt seems to get any ship from the value
+//  returned by createShipAtShipData
+fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double): ServerShip {
     if (blocks.isEmpty()) throw IllegalArgumentException()
 
     // Find the bound of the ship to be physicified
@@ -80,7 +83,46 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double?
     }
 
     teleportShip(level, ship, shipData)
-    if(scale != null) scaleShip(level, ship, scale)
+    if(scale != 1.0) scaleShip(level, ship, scale)
+
+    return ship
+}
+
+fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, centerBlockPos: BlockPos, scale: Double = 1.0): ServerShip {
+    if (blocks.isEmpty()) throw IllegalArgumentException()
+
+
+    val ship: ServerShip = level.shipObjectWorld
+            .createNewShipAtBlock(centerBlockPos.toJOML(), false, scale, level.dimensionId)
+    val shipData = ShipData(ship)
+
+    // Make a class to help with moving out the block
+    val relocateLevel = RelocateLevel(level)
+
+    blocks.forEachChunk { chunkX, chunkY, chunkZ, chunk ->
+        chunk.forEach { x, y, z ->
+            val relative: BlockPos = BlockPos(x, y, z).subtract(centerBlockPos)
+            val shipPos: BlockPos = centerBlockPos.offset(relative)
+
+            // Copy blocks
+            relocateLevel.copyBlock(BlockPos(x, y, z), shipPos)
+
+            // Remove block after replacing it
+            relocateLevel.removeBlock(BlockPos(x, y, z))
+
+            // Trigger update
+            relocateLevel.triggerUpdate(BlockPos(x, y, z))
+            relocateLevel.triggerUpdate(shipPos)
+        }
+    }
+
+    if (ship.inertiaData.mass == 0.0) {
+        vsCore.deleteShips(level.shipObjectWorld, listOf(ship))
+        LOGGER.warn("Created ship has mass of 0! Aborting the operation and deleting the ship!")
+    }
+
+    teleportShip(level, ship, shipData)
+    if(scale != 1.0) scaleShip(level, ship, scale)
 
     return ship
 }
@@ -139,12 +181,12 @@ fun createShipAtShipData(level: ServerLevel, shipData: ShipData): BlockPos {
     level.setBlock(centerBlockPos, Blocks.STONE.defaultBlockState(), 3)
 
     // Teleport ship to final destination
-    level.server.shipObjectWorld
+    level.shipObjectWorld
         .teleportShip(newShip, shipData.toShipTeleportData())
     return centerBlockPos
 }
 
 private fun teleportShip(level: ServerLevel, ship: ServerShip, shipData: ShipData) {
-    level.server.shipObjectWorld
+    level.shipObjectWorld
         .teleportShip(ship, shipData.toShipTeleportData())
 }
