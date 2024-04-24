@@ -23,7 +23,7 @@ import org.valkyrienskies.mod.common.world.clipIncludeShips
 // FIXME dont use this rn, createShipAtShipData seems broken
 //  getShipManaging doesnt seems to get any ship from the value
 //  returned by createShipAtShipData
-fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double): ServerShip {
+fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double): Pair<ServerShip, ShipData> {
     if (blocks.isEmpty()) throw IllegalArgumentException()
 
     // Find the bound of the ship to be physicified
@@ -85,10 +85,10 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double)
     teleportShip(level, ship, shipData)
     if(scale != 1.0) scaleShip(level, ship, scale)
 
-    return ship
+    return Pair(ship, shipData)
 }
 
-fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, centerBlockPos: BlockPos, scale: Double = 1.0): ServerShip {
+fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, centerBlockPos: BlockPos, scale: Double = 1.0): Pair<ServerShip, ShipData> {
     if (blocks.isEmpty()) throw IllegalArgumentException()
 
 
@@ -124,7 +124,7 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, centerBlockPos
     teleportShip(level, ship, shipData)
     if(scale != 1.0) scaleShip(level, ship, scale)
 
-    return ship
+    return Pair(ship, shipData)
 }
 
 fun scaleShip(level: ServerLevel, ship: ServerShip, scale: Double) {
