@@ -5,7 +5,7 @@ import org.joml.Vector3f
 import org.joml.Vector3i
 import kotlin.math.floor
 
-fun Vector3d.floorToJOMLI() = Vector3i(floor(this.x).toInt(), floor(this.y).toInt(), floor(this.z).toInt())
+fun Vector3d.floorToJOMLI() = Vector3i(this.x.toInt(), this.y.toInt(), this.z.toInt())
 
 
 fun Vector3d.toFloat() = Vector3f(x.toFloat(), y.toFloat(), z.toFloat())

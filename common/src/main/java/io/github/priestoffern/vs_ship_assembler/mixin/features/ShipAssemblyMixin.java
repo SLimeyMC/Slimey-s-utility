@@ -1,5 +1,6 @@
 package io.github.priestoffern.vs_ship_assembler.mixin.features;
 
+import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
@@ -17,9 +18,10 @@ import static io.github.priestoffern.vs_ship_assembler.physicify.ShipPhysicifyKt
 public final class ShipAssemblyMixin {
 
     // Overwrite the createNewShipWithBlocks function with our own function which won't break redstone stuff
-    // and create duplication glitch on create stuff
+    // and create duplication glitch on create stuff. it also block illegal block from physicified
     @Inject(method = "createNewShipWithBlocks", at = @At("HEAD"), cancellable = true)
     private static void onCreateNewShipWithBlocks(@NotNull BlockPos centerBlock, @NotNull DenseBlockPosSet blocks, @NotNull ServerLevel level, CallbackInfoReturnable<ServerShip> cir) {
-        cir.setReturnValue(physicifyBlocks(level, blocks,1.0));
+        // TODO configurable forbidden assemble tag and a boolean to check if none match it here
+        cir.setReturnValue(physicifyBlocks(level, blocks, 1.0));
     }
 }

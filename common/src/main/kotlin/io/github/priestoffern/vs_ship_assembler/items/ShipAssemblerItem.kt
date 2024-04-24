@@ -90,7 +90,7 @@ class ShipAssemblerItem(properties: Properties): RaycastableItem(properties) {
         for (x in min(selectionStart!!.x, selectionEnd!!.x)..max(selectionStart!!.x, selectionEnd!!.x)) {
             for (y in min(selectionStart!!.y, selectionEnd!!.y)..max(selectionStart!!.y, selectionEnd!!.y)) {
                 for (z in min(selectionStart!!.z, selectionEnd!!.z)..max(selectionStart!!.z, selectionEnd!!.z)) {
-                    if (level.getBlockState(BlockPos(x,y,z)).tags.noneMatch { it == VsShipAssemblerTags.FORBIDDEN_ASSEMBLE })
+                    if (level.getBlockState(BlockPos(x, y, z)).tags.noneMatch { it == VsShipAssemblerTags.FORBIDDEN_ASSEMBLE })
                     blockPosSet.add(x, y, z)
                 }
             }
