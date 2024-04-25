@@ -1,7 +1,6 @@
 package io.github.priestoffern.vs_ship_assembler.mixin.features;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.priestoffern.vs_ship_assembler.rendering.Renderer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -13,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static io.github.priestoffern.vs_ship_assembler.rendering.RenderDataKt.renderData;
+import static io.github.priestoffern.vs_ship_assembler.client.renderer.RenderDataKt.renderData;
 
 
 @Mixin(GameRenderer.class)

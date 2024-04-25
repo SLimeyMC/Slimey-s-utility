@@ -1,10 +1,9 @@
 package io.github.priestoffern.vs_ship_assembler.items
 
-import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod
 import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod.RENDER_TYPE
-import io.github.priestoffern.vs_ship_assembler.rendering.Renderer
-import io.github.priestoffern.vs_ship_assembler.rendering.RenderingData
-import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
+import io.github.priestoffern.vs_ship_assembler.client.renderer.Renderer
+import io.github.priestoffern.vs_ship_assembler.client.renderer.RenderingData
+import io.github.priestoffern.vs_ship_assembler.client.renderer.SelectionZoneRenderer
 import io.github.priestoffern.vs_ship_assembler.util.toFloat
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player

@@ -1,13 +1,12 @@
 package io.github.priestoffern.vs_ship_assembler.items
 
-import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod
 import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod.LOGGER
 import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerMod.RENDER_TYPE
 import io.github.priestoffern.vs_ship_assembler.VsShipAssemblerTags
 import io.github.priestoffern.vs_ship_assembler.physicify.physicifyBlocks
-import io.github.priestoffern.vs_ship_assembler.rendering.Renderer
-import io.github.priestoffern.vs_ship_assembler.rendering.RenderingData
-import io.github.priestoffern.vs_ship_assembler.rendering.SelectionZoneRenderer
+import io.github.priestoffern.vs_ship_assembler.client.renderer.Renderer
+import io.github.priestoffern.vs_ship_assembler.client.renderer.RenderingData
+import io.github.priestoffern.vs_ship_assembler.client.renderer.SelectionZoneRenderer
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Vec3i
@@ -24,7 +23,6 @@ import net.minecraft.world.level.block.SoundType
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.util.toJOMLF
-import org.valkyrienskies.mod.util.logger
 import java.awt.Color
 import java.lang.Math.*
 

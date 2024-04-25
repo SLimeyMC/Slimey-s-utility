@@ -1,4 +1,4 @@
-package io.github.priestoffern.vs_ship_assembler.rendering
+package io.github.priestoffern.vs_ship_assembler.client.renderer
 
 object Renderer {
     var CurrentId:Long = 0

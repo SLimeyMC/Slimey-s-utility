@@ -1,9 +1,8 @@
-package io.github.priestoffern.vs_ship_assembler.rendering
+package io.github.priestoffern.vs_ship_assembler.client.renderer
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
 import com.mojang.math.Matrix4f
-import io.github.priestoffern.vs_ship_assembler.util.iterateCorners
 import io.github.priestoffern.vs_ship_assembler.util.toFloat
 import net.minecraft.client.Camera
 import net.minecraft.client.renderer.GameRenderer
