@@ -13,26 +13,26 @@
     "sources": "https://github.com/ValkyrienSkies/Eureka"
   },
   "license": "Apache-2.0",
-  "icon": "assets/vs_ship_assembler/icon.png",
+  "icon": "assets/slimeys_utility/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.priestoffern.vs_ship_assembler.fabric.VsShipAssemblerModFabric"
+      "io.github.slimeyar.slimeys_utility.fabric.SlimeysUtilityModFabric"
     ],
     "client": [
-      "io.github.priestoffern.vs_ship_assembler.fabric.VsShipAssemblerModFabric${'$'}Client"
+      "io.github.slimeyar.slimeys_utility.fabric.SlimeysUtilityModFabric$Client"
     ],
     "preLaunch": [
-      "io.github.priestoffern.vs_ship_assembler.fabric.ValkyrienPreLaunch"
+      "io.github.slimeyar.slimeys_utility.fabric.ValkyrienPreLaunch"
     ]
   },
   "mixins": [
-    "vs_ship_assembler-common.mixins.json",
-    "vs_ship_assembler.mixins.json"
+    "slimeys_utility-common.mixins.json",
+    "slimeys_utility.mixins.json"
   ],
   "depends": {
     "minecraft": ">=1.18.2",
-    "valkyrienskies": ">=2.1.1-beta.1",
+    "valkyrienskies": ">=2.1.1-beta.5",
     "fabricloader": ">=0.14.21"
   }
 }
