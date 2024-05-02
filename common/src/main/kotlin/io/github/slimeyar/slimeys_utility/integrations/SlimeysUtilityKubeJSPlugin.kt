@@ -2,9 +2,9 @@ package io.github.slimeyar.slimeys_utility.integrations
 
 import dev.latvian.mods.kubejs.KubeJSPlugin
 import dev.latvian.mods.kubejs.script.BindingsEvent
-import io.github.priestoffern.vs_ship_assembler.items.*
-import io.github.priestoffern.vs_ship_assembler.ship.ShipData
-import io.github.priestoffern.vs_ship_assembler.util.RelocateLevel
+import io.github.slimeyar.slimeys_utility.items.*
+import io.github.slimeyar.slimeys_utility.ship.ShipData
+import io.github.slimeyar.slimeys_utility.util.RelocateLevel
 
 class SlimeysUtilityKubeJSPlugin: KubeJSPlugin() {
     override fun addBindings(event: BindingsEvent) {

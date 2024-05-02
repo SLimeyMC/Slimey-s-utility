@@ -11,7 +11,7 @@ import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.util.datastructures.DenseBlockPosSet;
 import org.valkyrienskies.mod.common.assembly.ShipAssemblyKt;
 
-import static io.github.priestoffern.vs_ship_assembler.physicify.ShipPhysicifyKt.physicifyBlocks;
+import static io.github.slimeyar.slimeys_utility.physicify.ShipPhysicifyKt.physicifyBlocks;
 
 @Mixin(ShipAssemblyKt.class)
 public final class ShipAssemblyMixin {

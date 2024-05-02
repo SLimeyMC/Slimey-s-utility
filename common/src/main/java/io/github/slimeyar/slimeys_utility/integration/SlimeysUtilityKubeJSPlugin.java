@@ -1,8 +1,8 @@
 package io.github.slimeyar.slimeys_utility.integration;
 
 import dev.latvian.mods.kubejs.script.BindingsEvent;
-import io.github.priestoffern.vs_ship_assembler.physicify.ShipPhysicifyKt;
-import io.github.priestoffern.vs_ship_assembler.util.VectorConversionKt;
+import io.github.slimeyar.slimeys_utility.physicify.ShipPhysicifyKt;
+import io.github.slimeyar.slimeys_utility.util.VectorConversionKt;
 
 
 public class SlimeysUtilityKubeJSPlugin {
