@@ -1,0 +1,67 @@
+package io.github.slimeyar.slimeys_utility.client.gui.screens
+
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.PoseStack
+import dev.architectury.networking.NetworkManager
+import io.github.slimeyar.slimeys_utility.SlimeysUtilityMod
+import io.github.slimeyar.slimeys_utility.SlimeysUtilityNetworking.SHIP_TAGGING_CONFIRM_PACKET_ID
+import io.netty.buffer.Unpooled
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.components.EditBox
+import net.minecraft.client.gui.components.Widget
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.player.Player
+import org.thinkingstudio.obsidianui.Position
+import org.thinkingstudio.obsidianui.SprucePositioned
+import org.thinkingstudio.obsidianui.SpruceTexts
+import org.thinkingstudio.obsidianui.screen.SpruceHandledScreen
+import org.thinkingstudio.obsidianui.screen.SpruceScreen
+import org.thinkingstudio.obsidianui.widget.SpruceButtonWidget
+import org.thinkingstudio.obsidianui.widget.SpruceLabelWidget
+import org.thinkingstudio.obsidianui.widget.container.SpruceContainerWidget
+import org.thinkingstudio.obsidianui.widget.text.SpruceTextFieldWidget
+import org.valkyrienskies.core.api.ships.Ship
+import org.valkyrienskies.core.util.writeVec3d
+
+
+class ShipTaggerScreen(title: Component?, val ship: Ship) : SpruceScreen(title) {
+    // Once i get around adding texture to it
+    private val TEXTURE = ResourceLocation(SlimeysUtilityMod.MOD_ID, "textures/gui/ship_tagger.png")
+
+    private lateinit var name: SpruceTextFieldWidget
+
+    private lateinit var position: Position
+
+    override fun init() {
+        super.init()
+        position = Position.center(this.width, this.height / 6)
+        this.addRenderableWidget(
+            SpruceLabelWidget(position,
+                TranslatableComponent("slimeys_utility.ship_tagger.title"),
+                400, true)
+        )
+        position.move(0, 20)
+        name = this.addRenderableWidget(
+            SpruceTextFieldWidget(position, 200, 20,
+                TranslatableComponent("slimeys_utility.ship_tagger.text_field"))
+        )
+        position.relativeY = this.height / 5 * 3
+        this.addRenderableWidget(
+            SpruceButtonWidget(position, 150, 20,
+                TranslatableComponent("slimeys_utility.ship_tagger.confirm")
+            ) {
+                val buf = FriendlyByteBuf(Unpooled.buffer())
+                buf.writeVec3d(ship.transform.positionInWorld)
+                buf.writeUtf(name.text)
+                NetworkManager.sendToServer(SHIP_TAGGING_CONFIRM_PACKET_ID, buf)
+            }
+        )
+
+    }
+}
