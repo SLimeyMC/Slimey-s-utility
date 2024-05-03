@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "vs_ship_assembler",
-  "version": "${version}",
+  "id": "slimeys_utility",
+  "version": "${mod_version}",
   "name": "Slimey's Utility",
   "description": "Just Utility mod nothing crazy",
   "authors": [
