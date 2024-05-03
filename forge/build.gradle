@@ -91,16 +91,14 @@ dependencies {
     modImplementation libs.forge.obsidianui
 
     modImplementation libs.forge.kubejs
-    //include(forgeRuntimeLibrary  "com.github.M-Marvin:LIBRARY-UnifiedVectors:$univec_version")
-
 }
 
 processResources {
     inputs.property "version", project.version
 
-    filesMatching("META-INF/mods.toml") {
-        expand "version": project.version, "vs2_version": project.vs2_version.substring(0, project.vs2_version.indexOf('+'))
-    }
+//    filesMatching("META-INF/mods.toml") {
+//        expand "version": project.version, "vs2_version": project.vs2_version.substring(0, project.vs2_version.indexOf('+'))
+//    }
 }
 
 tasks.withType(JavaCompile).configureEach {
