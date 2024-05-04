@@ -1,10 +1,7 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "com.matthewprenger.cursegradle"
-    id "com.modrinth.minotaur"
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.modpublish)
 }
-
-// apply from: '../gradle-scripts/publish-curseforge.gradle'
 
 architectury {
     platformSetupLoomIde()
@@ -72,7 +69,7 @@ dependencies {
 //        exclude(group: "com.simibubi.create")
 //    }
 
-    modImplementation(libs.fabric.obsidianui)
+    include(libs.fabric.obsidianui)
 
     modImplementation(libs.fabric.kubejs)
 
