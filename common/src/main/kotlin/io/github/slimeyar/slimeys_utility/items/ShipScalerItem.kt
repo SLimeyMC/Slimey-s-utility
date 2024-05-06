@@ -2,9 +2,10 @@ package io.github.slimeyar.slimeys_utility.items
 
 import dev.architectury.networking.NetworkManager
 import io.github.slimeyar.slimeys_utility.SlimeysUtilityMod.LOGGER
-import io.github.slimeyar.slimeys_utility.SlimeysUtilityMod.SHIP_SCALING_SCREEN_PACKET_ID
+import io.github.slimeyar.slimeys_utility.SlimeysUtilityNetworking.SHIP_SCALING_SCREEN_PACKET_ID
 import io.github.slimeyar.slimeys_utility.physicify.scaleShip
 import io.netty.buffer.Unpooled
+import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -16,6 +17,7 @@ import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.SoundType
 import org.valkyrienskies.core.api.ships.ServerShip
+import org.valkyrienskies.core.util.writeVec3d
 import org.valkyrienskies.mod.common.world.clipIncludeShips
 
 class ShipScalerItem(properties: Properties) : ShipSelectingItem(properties) {
@@ -26,9 +28,9 @@ class ShipScalerItem(properties: Properties) : ShipSelectingItem(properties) {
 
         if (selectedShip != null) {
             val buf = FriendlyByteBuf(Unpooled.buffer())
-            buf.writeBlockPos()
+            buf.writeVec3d(selectedShip!!.transform.positionInWorld)
 
-            NetworkManager.sendToPlayer(player as ServerPlayer, SHIP_SCALING_SCREEN_PACKET_ID.path, )
+            NetworkManager.sendToPlayer(player as ServerPlayer, SHIP_SCALING_SCREEN_PACKET_ID, buf)
         }
         return super.use(level, player, interactionHand)
     }

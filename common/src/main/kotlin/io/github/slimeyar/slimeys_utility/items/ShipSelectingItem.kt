@@ -22,7 +22,7 @@ open class ShipSelectingItem(properties: Properties) : RaycastableItem(propertie
 
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
         super.inventoryTick(stack, level, entity, slotId, isSelected)
-        val blockHitResult = level.clipIncludeShips(clipFromPlayer(level, entity as Player, ClipContext.Fluid.ANY))
+        val blockHitResult = level.clipIncludeShips(clipFromPlayer(level, entity as Player, ClipContext.Fluid.ANY), false)
         selectedShip = level.getShipManagingPos(blockHitResult.blockPos)
 
         if(selectedShip != null) {
