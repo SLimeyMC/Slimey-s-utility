@@ -17,13 +17,13 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.slimeyar.slimeys_utility.fabric.SlimeysUtilityModFabric"
+      "io.github.slimeymc.slimeys_utility.fabric.SlimeysUtilityModFabric"
     ],
     "client": [
-      "io.github.slimeyar.slimeys_utility.fabric.SlimeysUtilityModFabric$Client"
+      "io.github.slimeymc.slimeys_utility.fabric.SlimeysUtilityModFabric"
     ],
     "preLaunch": [
-      "io.github.slimeyar.slimeys_utility.fabric.ValkyrienPreLaunch"
+      "io.github.slimeymc.slimeys_utility.fabric.ValkyrienPreLaunch"
     ]
   },
   "mixins": [
