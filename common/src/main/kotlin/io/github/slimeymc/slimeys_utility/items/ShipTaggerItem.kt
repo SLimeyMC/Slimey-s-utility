@@ -21,11 +21,11 @@ import org.valkyrienskies.mod.util.logger
 
 class ShipTaggerItem(properties: Properties) : ShipSelectingItem(properties) {
     override fun use(level: Level, player: Player, interactionHand: InteractionHand): InteractionResultHolder<ItemStack> {
-        _root_ide_package_.io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.LOGGER.info("${player.name} hit ${selectedShip?.transform?.positionInWorld}")
+        SlimeysUtilityMod.LOGGER.info("${player.name} hit ${selectedShip?.transform?.positionInWorld}")
         player.playSound(SoundType.AMETHYST_CLUSTER.placeSound, 1F, 1F)
 
         if (selectedShip != null) {
-            _root_ide_package_.io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.LOGGER.info("sending packet")
+            SlimeysUtilityMod.LOGGER.info("sending packet")
             val buf = FriendlyByteBuf(Unpooled.buffer())
             buf.writeVec3d(selectedShip!!.transform.positionInWorld)
 

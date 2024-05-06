@@ -10,7 +10,7 @@ import io.github.slimeymc.slimeys_utility.items.ShipTaggerItem
 import net.minecraft.world.item.CreativeModeTab.TAB_MISC
 
 object SlimeysUtilityItems {
-    val ITEMS = DeferredRegister.create(_root_ide_package_.io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.MOD_ID, Registry.ITEM_REGISTRY)
+    val ITEMS = DeferredRegister.create(SlimeysUtilityMod.MOD_ID, Registry.ITEM_REGISTRY)
 
     var SHIP_ASSEMBLER: RegistrySupplier<Item> = io.github.slimeymc.slimeys_utility.SlimeysUtilityItems.ITEMS.register("ship_assembler")
     { ShipAssemblerItem(Item.Properties().tab(TAB_MISC).stacksTo(1)) }

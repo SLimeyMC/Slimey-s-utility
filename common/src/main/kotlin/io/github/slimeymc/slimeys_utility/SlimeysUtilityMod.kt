@@ -8,11 +8,11 @@ object SlimeysUtilityMod {
 
     const val MOD_ID = "slimeys_utility"
 
-    val LOGGER = LoggerFactory.getLogger(_root_ide_package_.io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.MOD_ID)
+    val LOGGER = LoggerFactory.getLogger(MOD_ID)
 
     @JvmStatic
     fun init() {
-        _root_ide_package_.io.github.slimeymc.slimeys_utility.SlimeysUtilityItems.register()
-        _root_ide_package_.io.github.slimeymc.slimeys_utility.SlimeysUtilityNetworking.registerServer()
+        SlimeysUtilityItems.register()
+        SlimeysUtilityNetworking.registerServer()
     }
 }

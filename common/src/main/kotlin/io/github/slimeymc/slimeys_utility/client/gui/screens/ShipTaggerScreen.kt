@@ -33,7 +33,7 @@ import org.valkyrienskies.core.util.writeVec3d
 
 class ShipTaggerScreen(title: Component?, val ship: Ship) : SpruceScreen(title) {
     // Once i get around adding texture to it
-    private val TEXTURE = ResourceLocation(_root_ide_package_.io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.MOD_ID, "textures/gui/ship_tagger.png")
+    private val TEXTURE = ResourceLocation(SlimeysUtilityMod.MOD_ID, "textures/gui/ship_tagger.png")
 
     private lateinit var name: SpruceTextFieldWidget
 
