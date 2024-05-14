@@ -12,15 +12,13 @@ import net.minecraft.world.item.CreativeModeTab.TAB_MISC
 object SlimeysUtilityItems {
     val ITEMS = DeferredRegister.create(SlimeysUtilityMod.MOD_ID, Registry.ITEM_REGISTRY)
 
-    var SHIP_ASSEMBLER: RegistrySupplier<Item> = io.github.slimeymc.slimeys_utility.SlimeysUtilityItems.ITEMS.register("ship_assembler")
+    var SHIP_ASSEMBLER: RegistrySupplier<Item> = ITEMS.register("ship_assembler")
     { ShipAssemblerItem(Item.Properties().tab(TAB_MISC).stacksTo(1)) }
-    var SHIP_TAGGER: RegistrySupplier<Item> = io.github.slimeymc.slimeys_utility.SlimeysUtilityItems.ITEMS.register("ship_tagger")
+    var SHIP_TAGGER: RegistrySupplier<Item> = ITEMS.register("ship_tagger")
     { ShipTaggerItem(Item.Properties().tab(TAB_MISC).stacksTo(1)) }
-    var SHIP_SCALER: RegistrySupplier<Item> = io.github.slimeymc.slimeys_utility.SlimeysUtilityItems.ITEMS.register("ship_scaler")
+    var SHIP_SCALER: RegistrySupplier<Item> = ITEMS.register("ship_scaler")
     { ShipScalerItem(Item.Properties().tab(TAB_MISC).stacksTo(1)) }
     fun register() {
-        io.github.slimeymc.slimeys_utility.SlimeysUtilityItems.ITEMS.register()
+        ITEMS.register()
     }
-
-    private infix fun Item.byName(name: String) = io.github.slimeymc.slimeys_utility.SlimeysUtilityItems.ITEMS.register(name) { this }
 }
