@@ -16,9 +16,10 @@ import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.world.clipIncludeShips
 import java.awt.Color
 
-open class ShipSelectingItem(properties: Properties) : RaycastableItem(properties) {
+open class ShipSelectionItem(properties: Properties) : RaycastableItem(properties) {
     private var selectionZone: RenderingData? = null
     var selectedShip: Ship? = null
+
 
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
         super.inventoryTick(stack, level, entity, slotId, isSelected)

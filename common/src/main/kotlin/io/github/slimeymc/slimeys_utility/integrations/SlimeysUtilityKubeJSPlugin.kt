@@ -13,7 +13,7 @@ class SlimeysUtilityKubeJSPlugin: KubeJSPlugin() {
         event.add("RelocateLevel", RelocateLevel::class.java)
 
         // Item
-        event.add("ShipSelectingItem", ShipSelectingItem::class.java)
+        event.add("ShipSelectingItem", ShipSelectionItem::class.java)
         event.add("ShipAssemblerItem", ShipAssemblerItem::class.java)
         event.add("ShipScalerItem", ShipScalerItem::class.java)
         event.add("ShipTaggerItem", ShipTaggerItem::class.java)

@@ -5,7 +5,6 @@ import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.LOGGER
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityNetworking.SHIP_SCALING_SCREEN_PACKET_ID
 import io.github.slimeymc.slimeys_utility.physicify.scaleShip
 import io.netty.buffer.Unpooled
-import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -20,7 +19,7 @@ import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.util.writeVec3d
 import org.valkyrienskies.mod.common.world.clipIncludeShips
 
-class ShipScalerItem(properties: Properties) : ShipSelectingItem(properties) {
+class ShipScalerItem(properties: Properties) : ShipSelectionItem(properties) {
     override fun use(level: Level, player: Player, interactionHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val clipResult = level.clipIncludeShips(clipFromPlayer(level, player, ClipContext.Fluid.NONE))
         LOGGER.info("${player.name} hit ${clipResult.blockPos}")
