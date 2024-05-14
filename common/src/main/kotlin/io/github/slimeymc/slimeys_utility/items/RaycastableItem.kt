@@ -21,7 +21,7 @@ open class RaycastableItem(properties: Properties) : Item(properties) {
         val directionY: Double  = Mth.sin(pitchRad).toDouble()
         val directionZ: Double  = Mth.sin(yawRad - Mth.PI) * -Mth.cos(pitchRad).toDouble()
 
-        val rayEnd: Vec3 = eyePosition.add(directionX, directionY, directionZ).multiply(5.0, 5.0, 5.0) // use block reach instead
+        val rayEnd: Vec3 = eyePosition.add(directionX, directionY, directionZ).multiply(5.0, 5.0, 5.0)
 
         return ClipContext(eyePosition, rayEnd, ClipContext.Block.OUTLINE, fluidMode, player)
     }
