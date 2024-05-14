@@ -27,6 +27,9 @@ kubejs = "1802.5.5-build.569"
 obsidianui_fabric = "0.2.0+mc1.18.2-fabric"
 obsidianui_forge = "0.2.0+mc1.18.2-forge"
 
+flywheel_fabric = "1.18-0.6.3.27"
+flywheel_forge = "1.18-0.6.4.87"
+
 valkyrienskies = "2.1.1-beta.6+8efd751c2d"
 valkyrienskies_core = "1.1.0+8a93383ce5"
 
@@ -64,6 +67,10 @@ core_valkyrienskies_impl = { module = "org.valkyrienskies.core:impl", version.re
 # Obsidian UI
 fabric_obsidianui = { module = "maven.modrinth:obsidianui", version.ref = "obsidianui_fabric" }
 forge_obsidianui = { module = "maven.modrinth:obsidianui", version.ref = "obsidianui_forge" }
+
+# Flywheel
+fabric_flywheel = { module = "com.jozufozu.flywheel:Flywheel-Fabric", version.ref = "flywheel_fabric" }
+forge_flywheel = { module = "com.jozufozu.flywheel:Flywheel-Forge", version.ref = "flywheel_forge" }
 
 # Cloth COnfig and Modmenu (true)
 fabric_clothconfig = { module = "me.shedaniel.cloth:cloth-config-fabric", version = "6.4.90" }

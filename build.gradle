@@ -113,10 +113,13 @@ allprojects {
                 includeGroup "dev.latvian.mods"
             }
         }
-
         maven {
             name = "ParchmentMC"
             url = "https://maven.parchmentmc.org"
+        }
+        maven {
+            name "tterrag maven"
+            url "https://maven.tterrag.com/"
         }
     }
 
