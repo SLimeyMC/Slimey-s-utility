@@ -7,20 +7,15 @@ import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.MOD_ID
 import io.github.slimeymc.slimeys_utility.entity.ShipSelectionEntity
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.resources.ResourceLocation
-import org.joml.Matrix3d
-import org.joml.Matrix4d
-import org.joml.Matrix4x3dStack
 import org.lwjgl.opengl.GL11
 import org.valkyrienskies.mod.common.util.toMinecraft
-import java.awt.image.renderable.RenderContext
 
-class ShipSelectionRenderer(context: EntityRendererProvider.Context) : EntityRenderer<ShipSelectionEntity>(context) {
+class ShipSelectionEntityRenderer(context: EntityRendererProvider.Context) : EntityRenderer<ShipSelectionEntity>(context) {
     private var animationTime = 0.0f
 
     override fun getTextureLocation(entity: ShipSelectionEntity): ResourceLocation {
@@ -94,6 +89,8 @@ class ShipSelectionRenderer(context: EntityRendererProvider.Context) : EntityRen
         drawLine(1F, 0F, 0F,
                 0F, 0F, 0F)
 
+        RenderSystem.depthMask(false)
+        RenderSystem.disableCull()
 
 //        TODO: Once i am ready to render quad
 //        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK)
