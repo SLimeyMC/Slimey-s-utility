@@ -2,18 +2,15 @@ package io.github.slimeymc.slimeys_utility
 
 import dev.architectury.networking.NetworkManager
 import io.github.slimeymc.slimeys_utility.client.gui.screens.ShipTaggerScreen
-import io.github.slimeymc.slimeys_utility.physicify.scaleShip
 import net.minecraft.client.Minecraft
-import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.server.level.ServerLevel
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.util.readVec3d
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.vsCore
 
-object SlimeysUtilityNetworking {
+object SlimeysUtilityNetworkings {
     val SHIP_SCALING_SCREEN_PACKET_ID = ResourceLocation(SlimeysUtilityMod.MOD_ID, "ship_scaling_screen")
     val SHIP_TAGGING_SCREEN_PACKET_ID = ResourceLocation(SlimeysUtilityMod.MOD_ID, "ship_tagging_screen")
 

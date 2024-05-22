@@ -2,7 +2,7 @@ package io.github.slimeymc.slimeys_utility.items
 
 import dev.architectury.networking.NetworkManager
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod
-import io.github.slimeymc.slimeys_utility.SlimeysUtilityNetworking.SHIP_TAGGING_SCREEN_PACKET_ID
+import io.github.slimeymc.slimeys_utility.SlimeysUtilityNetworkings.SHIP_TAGGING_SCREEN_PACKET_ID
 import io.netty.buffer.Unpooled
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerPlayer

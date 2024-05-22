@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import dev.architectury.networking.NetworkManager
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.LOGGER
-import io.github.slimeymc.slimeys_utility.SlimeysUtilityNetworking.SHIP_TAGGING_CONFIRM_PACKET_ID
+import io.github.slimeymc.slimeys_utility.SlimeysUtilityNetworkings.SHIP_TAGGING_CONFIRM_PACKET_ID
 import io.netty.buffer.Unpooled
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.Button

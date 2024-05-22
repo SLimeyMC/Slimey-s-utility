@@ -13,6 +13,6 @@ object SlimeysUtilityMod {
     @JvmStatic
     fun init() {
         SlimeysUtilityItems.register()
-        SlimeysUtilityNetworking.registerServer()
+        SlimeysUtilityNetworkings.registerServer()
     }
 }
