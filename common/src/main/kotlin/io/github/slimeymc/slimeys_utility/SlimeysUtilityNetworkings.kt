@@ -2,6 +2,8 @@ package io.github.slimeymc.slimeys_utility
 
 import dev.architectury.networking.NetworkManager
 import io.github.slimeymc.slimeys_utility.client.gui.screens.ShipTaggerScreen
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.resources.ResourceLocation
@@ -11,10 +13,10 @@ import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.vsCore
 
 object SlimeysUtilityNetworkings {
-    val SHIP_SCALING_SCREEN_PACKET_ID = ResourceLocation(SlimeysUtilityMod.MOD_ID, "ship_scaling_screen")
-    val SHIP_TAGGING_SCREEN_PACKET_ID = ResourceLocation(SlimeysUtilityMod.MOD_ID, "ship_tagging_screen")
+    val SHIP_SCALING_SCREEN_PACKET_ID = ResourceLocation(SlimeysUtilityMod.ID, "ship_scaling_screen")
+    val SHIP_TAGGING_SCREEN_PACKET_ID = ResourceLocation(SlimeysUtilityMod.ID, "ship_tagging_screen")
 
-    val SHIP_TAGGING_CONFIRM_PACKET_ID = ResourceLocation(SlimeysUtilityMod.MOD_ID, "ship_tagging_screen")
+    val SHIP_TAGGING_CONFIRM_PACKET_ID = ResourceLocation(SlimeysUtilityMod.ID, "ship_tagging_screen")
 
     fun registerServer() {
         NetworkManager.registerReceiver(
@@ -32,6 +34,7 @@ object SlimeysUtilityNetworkings {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     fun registerClient() {
         NetworkManager.registerReceiver(
             NetworkManager.serverToClient(),

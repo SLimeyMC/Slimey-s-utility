@@ -16,13 +16,4 @@ public class SlimeysUtilityModFabric implements ModInitializer {
 
         SlimeysUtilityMod.init();
     }
-
-    @Environment(EnvType.CLIENT)
-    public static class Client implements ClientModInitializer {
-
-        @Override
-        public void onInitializeClient() {
-            SlimeysUtilityClient.init();
-        }
-    }
 }

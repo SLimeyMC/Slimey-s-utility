@@ -8,14 +8,14 @@ import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod
 import io.github.slimeymc.slimeys_utility.client.SlimeysUtilityClient
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 
-@Mod(SlimeysUtilityMod.MOD_ID)
+@Mod(SlimeysUtilityMod.ID)
 class SlimeysUtilityModForge {
     init {
         MOD_BUS.addListener { event: FMLClientSetupEvent? ->
             clientSetup(event)
         }
 
-        EventBuses.registerModEventBus(SlimeysUtilityMod.MOD_ID, MOD_BUS)
+        EventBuses.registerModEventBus(SlimeysUtilityMod.ID, MOD_BUS)
 
         SlimeysUtilityMod.init()
     }

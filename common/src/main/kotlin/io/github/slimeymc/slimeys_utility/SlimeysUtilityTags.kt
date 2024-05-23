@@ -10,6 +10,6 @@ object SlimeysUtilityTags {
     @JvmField
     var FORBIDDEN_ASSEMBLE: TagKey<Block> = TagKey.create(
         Registry.BLOCK_REGISTRY,
-        ResourceLocation(SlimeysUtilityMod.MOD_ID, "forbidden_assemble")
+        ResourceLocation(SlimeysUtilityMod.ID, "forbidden_assemble")
     )
 }
