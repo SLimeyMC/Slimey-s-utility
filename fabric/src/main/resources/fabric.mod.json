@@ -20,7 +20,7 @@
       "io.github.slimeymc.slimeys_utility.fabric.SlimeysUtilityModFabric"
     ],
     "client": [
-      "io.github.slimeymc.slimeys_utility.fabric.SlimeysUtilityModFabric"
+      "io.github.slimeymc.slimeys_utility.fabric.SlimeysUtilityClientModFabric"
     ],
     "preLaunch": [
       "io.github.slimeymc.slimeys_utility.fabric.ValkyrienPreLaunch"
