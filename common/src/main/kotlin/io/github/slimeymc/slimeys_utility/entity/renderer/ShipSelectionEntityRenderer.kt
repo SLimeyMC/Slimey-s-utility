@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
-import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.MOD_ID
+import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.ID
 import io.github.slimeymc.slimeys_utility.entity.ShipSelectionEntity
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
@@ -19,7 +19,7 @@ class ShipSelectionEntityRenderer(context: EntityRendererProvider.Context) : Ent
     private var animationTime = 0.0f
 
     override fun getTextureLocation(entity: ShipSelectionEntity): ResourceLocation {
-        return ResourceLocation(MOD_ID, "textures/entity/ship_selection.png")
+        return ResourceLocation(ID, "textures/entity/ship_selection.png")
     }
 
     override fun render(
@@ -32,7 +32,9 @@ class ShipSelectionEntityRenderer(context: EntityRendererProvider.Context) : Ent
     ) {
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight)
         val orientation = entity.orientation
-        val aabb = entity.aabb
+        val aabb = entity.prevTickAABB
+        // Do lerp stuff
+        entity.prevTickAABB = entity.aabb
 
         animationTime = (animationTime + partialTick) % 0.5F
 

@@ -12,7 +12,11 @@ import net.minecraft.world.level.Level
 import org.joml.Quaterniond
 import org.joml.primitives.AABBd
 
-class ShipSelectionEntity(entityType: EntityType<*>, level: Level, var aabb: AABBd, var orientation: Quaterniond) : Entity(entityType, level), EntitySpawnExtension {
+class ShipSelectionEntity(entityType: EntityType<ShipSelectionEntity>, level: Level) : Entity(entityType, level), EntitySpawnExtension {
+    var aabb = AABBd()
+    var orientation = Quaterniond()
+    var prevTickAABB = AABBd()
+
     override fun defineSynchedData() {}
 
     override fun readAdditionalSaveData(compound: CompoundTag) {
