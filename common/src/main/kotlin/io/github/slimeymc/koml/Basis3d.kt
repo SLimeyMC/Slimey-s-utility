@@ -1,7 +1,6 @@
 package io.github.slimeymc.koml
 
 import org.joml.*
-import org.lwjgl.system.MathUtil
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -38,7 +37,7 @@ data class Basis3d(internal var basis: Matrix3d) {
 
     var rotationQuaternion: Quaterniond
         get() = this.basis.getNormalizedRotation(Quaterniond())
-        set(value) {}
+        set(value) { this.setQuaternion(value) }
     var rotationEulerXYZ: Vector3d
         get() = this.basis.getEulerAnglesXYZ(Vector3d())
         set(value) { this.setEuler(value, EulerOrder.XYZ) }
@@ -63,29 +62,11 @@ data class Basis3d(internal var basis: Matrix3d) {
 
     constructor(i: Vector3dc, j: Vector3dc, k: Vector3dc) : this(Matrix3d().setRow(0, i).setRow(1, j).setRow(2, k))
 
-    constructor(quaternion: Quaterniond) : this() {
-        val d = quaternion.lengthSquared()
-        val s = 2.0 / d
-        val xs = quaternion.x * s
-        val ys = quaternion.y * s
-        val zs = quaternion.z * s
-        val wx = quaternion.w * xs
-        val wy = quaternion.w * ys
-        val wz = quaternion.w * zs
-        val xx = quaternion.x * xs
-        val xy = quaternion.x * ys
-        val xz = quaternion.x * zs
-        val yy = quaternion.y * ys
-        val yz = quaternion.y * zs
-        val zz = quaternion.z * zs
-        apply {
-            this.basis = Matrix3d(
-                1.0 - (yy + zz), xy - wz, xz + wy,
-                xy + wz, 1.0 - (xx + zz), yz - wx,
-                xz - wy, yz + wx, 1.0 - (xx + yy)
-            )
-        }
-    }
+    constructor(quaternion: Quaterniondc) : this() { apply { setQuaternion(quaternion) } }
+
+    constructor(euler: Vector3dc, order: EulerOrder) : this() { apply { setEuler(euler, order) } }
+
+    constructor(theta: Double, phi: Double, xi: Double, order: EulerOrder) : this() { apply { setEuler(Vector3d(theta, phi, xi), order) } }
 
     fun isSheared(): Boolean = (i.dot(j) > EPSILON || i.dot(k) > EPSILON || j.dot(k) > EPSILON)
     fun isOrthogonal(): Boolean = !isSheared()
@@ -151,18 +132,18 @@ data class Basis3d(internal var basis: Matrix3d) {
 
     operator fun times(scalar: Double) = this.scale(scalar)
 
-    internal fun setEuler(euler: Vector3d, order: EulerOrder = EulerOrder.YXZ) {
-        var c = cos(euler.x)
-        var s = sin(euler.x)
+    internal fun setEuler(euler: Vector3dc, order: EulerOrder = EulerOrder.YXZ) {
+        var c = cos(euler.x())
+        var s = sin(euler.x())
 
         val xmat = Basis3d(1.0, 0.0, 0.0, 0.0, c, -s, 0.0, s, c)
 
-        c = cos(euler.y)
-        s = sin(euler.y)
+        c = cos(euler.y())
+        s = sin(euler.y())
         val ymat = Basis3d(c, 0.0, s, 0.0, 1.0, 0.0, -s, 0.0, c)
 
-        c = cos(euler.z)
-        s = sin(euler.z)
+        c = cos(euler.z())
+        s = sin(euler.z())
         val zmat = Basis3d(c, -s, 0.0, s, c, 0.0, 0.0, 0.0, 1.0)
 
         when (order) {
@@ -172,6 +153,30 @@ data class Basis3d(internal var basis: Matrix3d) {
             EulerOrder.YZX -> Basis3d(ymat * zmat * xmat)
             EulerOrder.ZXY -> Basis3d(zmat * xmat * ymat)
             EulerOrder.ZYX -> Basis3d(zmat * ymat * xmat)
+        }
+    }
+
+    internal fun setQuaternion(quaternion: Quaterniondc) {
+        val d = quaternion.lengthSquared()
+        val s = 2.0 / d
+        val xs = quaternion.x() * s
+        val ys = quaternion.y() * s
+        val zs = quaternion.z() * s
+        val wx = quaternion.w() * xs
+        val wy = quaternion.w() * ys
+        val wz = quaternion.w() * zs
+        val xx = quaternion.x() * xs
+        val xy = quaternion.x() * ys
+        val xz = quaternion.x() * zs
+        val yy = quaternion.y() * ys
+        val yz = quaternion.y() * zs
+        val zz = quaternion.z() * zs
+        apply {
+            this.basis = Matrix3d(
+                1.0 - (yy + zz), xy - wz, xz + wy,
+                xy + wz, 1.0 - (xx + zz), yz - wx,
+                xz - wy, yz + wx, 1.0 - (xx + yy)
+            )
         }
     }
 }
