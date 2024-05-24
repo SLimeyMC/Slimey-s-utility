@@ -5,6 +5,7 @@ import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.LOGGER
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityNetworkings.SHIP_TAGGING_CONFIRM_PACKET_ID
 import io.netty.buffer.Unpooled
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TranslatableComponent
@@ -16,11 +17,12 @@ import org.thinkingstudio.obsidianui.widget.SpruceLabelWidget
 import org.thinkingstudio.obsidianui.widget.text.SpruceTextFieldWidget
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.util.writeVec3d
+import org.valkyrienskies.mod.util.putVector3d
 
 
 class ShipTaggerScreen(title: Component?, val ship: Ship) : SpruceScreen(title) {
     // Once i get around adding texture to it
-    private val TEXTURE = ResourceLocation(SlimeysUtilityMod.MOD_ID, "textures/gui/ship_tagger.png")
+    private val TEXTURE = ResourceLocation(SlimeysUtilityMod.ID, "textures/gui/ship_tagger.png")
 
     private lateinit var name: SpruceTextFieldWidget
 
