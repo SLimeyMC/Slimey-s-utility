@@ -54,12 +54,38 @@ data class Basis3d(internal var basis: Matrix3d) {
         val FLIP_Z = Basis3d(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0)
     }
 
+    constructor() : this(IDENTITY)
+
     constructor(basis: Basis3d) : this(basis.basis)
 
     constructor(ix: Double, iy: Double, iz: Double, jx: Double, jy: Double, jz: Double, kx: Double, ky: Double, kz: Double) :
             this(Vector3d(ix, iy, iz), Vector3d(jx, jy, jz), Vector3d(kx, ky, kz))
 
     constructor(i: Vector3dc, j: Vector3dc, k: Vector3dc) : this(Matrix3d().setRow(0, i).setRow(1, j).setRow(2, k))
+
+    constructor(quaternion: Quaterniond) : this() {
+        val d = quaternion.lengthSquared()
+        val s = 2.0 / d
+        val xs = quaternion.x * s
+        val ys = quaternion.y * s
+        val zs = quaternion.z * s
+        val wx = quaternion.w * xs
+        val wy = quaternion.w * ys
+        val wz = quaternion.w * zs
+        val xx = quaternion.x * xs
+        val xy = quaternion.x * ys
+        val xz = quaternion.x * zs
+        val yy = quaternion.y * ys
+        val yz = quaternion.y * zs
+        val zz = quaternion.z * zs
+        apply {
+            this.basis = Matrix3d(
+                1.0 - (yy + zz), xy - wz, xz + wy,
+                xy + wz, 1.0 - (xx + zz), yz - wx,
+                xz - wy, yz + wx, 1.0 - (xx + yy)
+            )
+        }
+    }
 
     fun isSheared(): Boolean = (i.dot(j) > EPSILON || i.dot(k) > EPSILON || j.dot(k) > EPSILON)
     fun isOrthogonal(): Boolean = !isSheared()
@@ -107,11 +133,10 @@ data class Basis3d(internal var basis: Matrix3d) {
         this.i.z * v.x + this.j.z * v.y + this.k.z * v.z
 
 
-    fun transpose(): Basis3d =
-        Basis3d(i.x, j.x, k.x,
+    fun transpose(): Basis3d = Basis3d(
+            i.x, j.x, k.x,
             i.y, j.y, k.y,
-            i.z, j.z, k.z
-        )
+            i.z, j.z, k.z)
 
     operator fun plus(matrix: Basis3d) = Basis3d(this.i + matrix.i, this.j + matrix.j, this.k + matrix.k)
 
