@@ -3,8 +3,27 @@ package io.github.slimeymc.slimeys_utility.util
 import net.minecraft.network.FriendlyByteBuf
 import org.joml.Quaterniond
 import org.joml.Quaterniondc
+import org.joml.Vector3d
+import org.joml.Vector3dc
 import org.joml.primitives.AABBd
 import org.joml.primitives.AABBdc
+
+fun FriendlyByteBuf.writeVector3d(vector3d: Vector3dc) =
+    with(vector3d) {
+        writeLongArray(LongArray(3).apply {
+            set(0, z().toRawBits())
+            set(1, y().toRawBits())
+            set(2, x().toRawBits())
+        })
+    }
+fun FriendlyByteBuf.readVector3d(): Vector3d {
+    val data = readLongArray(LongArray(6)).iterator()
+    return Vector3d().apply {
+        x = Double.fromBits(data.next())
+        y = Double.fromBits(data.next())
+        z = Double.fromBits(data.next())
+    }
+}
 
 fun FriendlyByteBuf.writeAABBd(aabBd: AABBdc) =
     with(aabBd) {
@@ -17,7 +36,6 @@ fun FriendlyByteBuf.writeAABBd(aabBd: AABBdc) =
             set(5, maxZ().toRawBits())
         })
     }
-
 fun FriendlyByteBuf.readAABBd(): AABBd {
     val data = readLongArray(LongArray(6)).iterator()
     return AABBd().apply {
@@ -39,7 +57,6 @@ fun FriendlyByteBuf.writeQuaterniond(quaterniond: Quaterniondc) =
             set(3, w().toRawBits())
         })
     }
-
 fun FriendlyByteBuf.readQuaterniond(): Quaterniond {
     val data = readLongArray(LongArray(4)).iterator()
     return Quaterniond().apply {

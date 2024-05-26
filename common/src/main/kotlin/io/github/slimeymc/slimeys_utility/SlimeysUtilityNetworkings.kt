@@ -36,20 +36,6 @@ object SlimeysUtilityNetworkings {
                 vsCore.renameShip(ship as ServerShip, name)
             }
         }
-        NetworkManager.registerReceiver(
-            NetworkManager.clientToServer(),
-            SHIP_SELECTION_ENTITY_PACKET_ID
-        ) { buf, ctx ->
-            SlimeysUtilityMod.LOGGER.info("procced with the request")
-            val player = ctx.player // Add player to list of ship ownership
-            val level = player.level
-            val ship = level.getShipManagingPos(buf.readBlockPos()) ?: return@registerReceiver
-            val shipSelectionEntity = (player.mainHandItem.item as ShipSelectionItem).s
-            val shipAABB = buf.readAABBd()
-            ctx.queue {
-                (player.mainHandItem.item as ShipSelectionItem).selectedShip
-            }
-        }
     }
 
     @Environment(EnvType.CLIENT)

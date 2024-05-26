@@ -18,7 +18,9 @@ class ShipSelectionEntity(entityType: EntityType<ShipSelectionEntity>, level: Le
     var orientation = Quaterniond()
     var prevTickAABB = AABBd()
 
-    override fun defineSynchedData() {}
+    override fun defineSynchedData() {
+
+    }
 
     override fun readAdditionalSaveData(compound: CompoundTag) {
         if(compound.hasAABBd("shipAABB"))
@@ -37,6 +39,7 @@ class ShipSelectionEntity(entityType: EntityType<ShipSelectionEntity>, level: Le
     }
 
     override fun loadAdditionalSpawnData(buf: FriendlyByteBuf) {
+
         this.orientation = buf.readQuaterniond()
         this.aabb = buf.readAABBd()
     }

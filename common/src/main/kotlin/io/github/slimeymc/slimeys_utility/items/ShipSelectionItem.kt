@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level
 import org.joml.Quaterniond
 import org.joml.Vector3d
 import org.joml.primitives.AABBd
+import org.joml.primitives.AABBi
 import org.valkyrienskies.core.api.ships.Ship
 import org.valkyrienskies.core.util.writeAABBi
 import org.valkyrienskies.core.util.writeQuatd
@@ -45,11 +46,11 @@ open class ShipSelectionItem(properties: Properties) : RaycastableItem(propertie
         selectedShip = level.getShipManagingPos(blockHitResult.blockPos)
 
         if(selectedShip != null && isSelected) {
-            val shipAABB = AABBd(selectedShip!!.worldAABB)
+            val shipAABB = AABBi(selectedShip!!.shipAABB)
             val shipOrientation = Quaterniond(selectedShip!!.transform.shipToWorldRotation)
             if (shipSelectionEntity == null) {
                 val packet = CompoundTag()
-                packet.putAABBd("ShipAABB", shipAABB)
+                packet.putAABBi("ShipAABB", shipAABB)
                 packet.putQuaterniond("ShipOrientation", shipOrientation)
                 SHIP_SELECTION_ENTITY.get().spawn(
                     level as ServerLevel, packet, null, null,
@@ -59,12 +60,14 @@ open class ShipSelectionItem(properties: Properties) : RaycastableItem(propertie
             } else {
                 // TODO Slowly interpolate
                 val buf = FriendlyByteBuf(Unpooled.buffer())
-                buf.writeVec3d(selectedShip!!.worldAABB.center(Vector3d()))
-                buf.writeAABBd(shipAABB)
+                buf.writeVector3d(selectedShip!!.worldAABB.center(Vector3d()))
+                buf.writeAABBi(shipAABB)
                 buf.writeQuaterniond(shipOrientation)
-                shipSelectionEntity!!.setPos()
-                NetworkManager.sendToServer(SlimeysUtilityNetworkings.SHIP_SELECTION_ENTITY_PACKET_ID, buf)
+                shipSelectionEntity!!.loadAdditionalSpawnData(buf)
             }
-        } else if(shipSelectionEntity != null) shipSelectionEntity!!.kill()
+        } else if(shipSelectionEntity != null) {
+            shipSelectionEntity!!.kill()
+            shipSelectionEntity = null
+        }
     }
 }
