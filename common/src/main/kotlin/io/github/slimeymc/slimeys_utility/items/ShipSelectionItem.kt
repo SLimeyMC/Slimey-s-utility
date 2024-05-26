@@ -4,15 +4,15 @@ import dev.architectury.networking.NetworkManager
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityEntities
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityEntities.SHIP_SELECTION_ENTITY
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.RENDER_TYPE
+import io.github.slimeymc.slimeys_utility.SlimeysUtilityNetworkings
 import io.github.slimeymc.slimeys_utility.client.renderer.Renderer
 import io.github.slimeymc.slimeys_utility.client.renderer.RenderingData
 import io.github.slimeymc.slimeys_utility.client.renderer.SelectionZoneRenderer
 import io.github.slimeymc.slimeys_utility.entity.ShipSelectionEntity
-import io.github.slimeymc.slimeys_utility.util.floorToBlockPos
-import io.github.slimeymc.slimeys_utility.util.putAABBd
-import io.github.slimeymc.slimeys_utility.util.putQuaterniond
-import io.github.slimeymc.slimeys_utility.util.toFloat
+import io.github.slimeymc.slimeys_utility.util.*
+import io.netty.buffer.Unpooled
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -25,7 +25,11 @@ import org.joml.Quaterniond
 import org.joml.Vector3d
 import org.joml.primitives.AABBd
 import org.valkyrienskies.core.api.ships.Ship
+import org.valkyrienskies.core.util.writeAABBi
+import org.valkyrienskies.core.util.writeQuatd
+import org.valkyrienskies.core.util.writeVec3d
 import org.valkyrienskies.mod.common.getShipManagingPos
+import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toMinecraft
 import org.valkyrienskies.mod.common.world.clipIncludeShips
 import java.awt.Color
@@ -42,16 +46,25 @@ open class ShipSelectionItem(properties: Properties) : RaycastableItem(propertie
 
         if(selectedShip != null && isSelected) {
             val shipAABB = AABBd(selectedShip!!.worldAABB)
-            val packet = CompoundTag()
-            packet.putAABBd("ShipAABB", shipAABB)
-            packet.putQuaterniond("ShipOrientation", Quaterniond(selectedShip!!.transform.shipToWorldRotation))
-            if (shipSelectionEntity == null)
+            val shipOrientation = Quaterniond(selectedShip!!.transform.shipToWorldRotation)
+            if (shipSelectionEntity == null) {
+                val packet = CompoundTag()
+                packet.putAABBd("ShipAABB", shipAABB)
+                packet.putQuaterniond("ShipOrientation", shipOrientation)
                 SHIP_SELECTION_ENTITY.get().spawn(
                     level as ServerLevel, packet, null, null,
                     shipAABB.center(Vector3d()).floorToBlockPos(),
                     MobSpawnType.TRIGGERED, false, false
                 )
-            else shipSelectionEntity!!.setPos(shipAABB.center(Vector3d()).toMinecraft())
-        }
+            } else {
+                // TODO Slowly interpolate
+                val buf = FriendlyByteBuf(Unpooled.buffer())
+                buf.writeVec3d(selectedShip!!.worldAABB.center(Vector3d()))
+                buf.writeAABBd(shipAABB)
+                buf.writeQuaterniond(shipOrientation)
+                shipSelectionEntity!!.setPos()
+                NetworkManager.sendToServer(SlimeysUtilityNetworkings.SHIP_SELECTION_ENTITY_PACKET_ID, buf)
+            }
+        } else if(shipSelectionEntity != null) shipSelectionEntity!!.kill()
     }
 }

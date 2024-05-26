@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.level.Level
 import org.joml.Quaterniond
 import org.joml.primitives.AABBd
+import org.valkyrienskies.core.util.read3FAsNormQuatd
 
 class ShipSelectionEntity(entityType: EntityType<ShipSelectionEntity>, level: Level) : Entity(entityType, level), EntitySpawnExtension {
     var aabb = AABBd()
@@ -35,11 +36,13 @@ class ShipSelectionEntity(entityType: EntityType<ShipSelectionEntity>, level: Le
         return NetworkManager.createAddEntityPacket(this)
     }
 
-    override fun saveAdditionalSpawnData(buf: FriendlyByteBuf?) {
-        TODO("Not yet implemented")
+    override fun loadAdditionalSpawnData(buf: FriendlyByteBuf) {
+        this.orientation = buf.readQuaterniond()
+        this.aabb = buf.readAABBd()
     }
 
-    override fun loadAdditionalSpawnData(buf: FriendlyByteBuf?) {
-        TODO("Not yet implemented")
+    override fun saveAdditionalSpawnData(buf: FriendlyByteBuf) {
+        buf.writeAABBd(this.aabb)
+        buf.writeQuaterniond(this.orientation)
     }
 }
