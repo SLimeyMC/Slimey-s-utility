@@ -32,9 +32,7 @@ class ShipSelectionEntityRenderer(context: EntityRendererProvider.Context) : Ent
     ) {
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight)
         val orientation = entity.orientation
-        val aabb = entity.prevTickAABB
-        // Do lerp stuff
-        entity.prevTickAABB = entity.aabb
+        val aabb = entity.aabb
 
         animationTime = (animationTime + partialTick) % 0.5F
 
