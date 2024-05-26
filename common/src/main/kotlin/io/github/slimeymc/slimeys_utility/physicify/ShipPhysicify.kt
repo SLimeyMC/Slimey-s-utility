@@ -1,5 +1,6 @@
 package io.github.slimeymc.slimeys_utility.physicify
 
+import io.github.slimeymc.koml.plus
 import io.github.slimeymc.slimeys_utility.SlimeysUtilityMod.LOGGER
 import io.github.slimeymc.slimeys_utility.ship.ShipData
 import io.github.slimeymc.slimeys_utility.util.RelocateLevel
@@ -46,7 +47,7 @@ fun physicifyBlocks(level: ServerLevel, blocks: DenseBlockPosSet, scale: Double)
     }
 
     // Create new ship at center of bounds
-    val shipWorldPos: Vector3d = structureCornerMin.toJOMLD().add(structureCornerMax.toJOMLD()).div(2.0)
+    val shipWorldPos: Vector3d = structureCornerMin.toJOMLD() + structureCornerMax.toJOMLD() / 2.0
     val shipData = ShipData(Quaterniond(0.0, 0.0, 0.0, 1.0), shipWorldPos, null)
     val shipBlockPos: BlockPos = createShipAtShipData(level, shipData)
     val ship: ServerShip = level.getShipManagingPos(shipBlockPos)!!

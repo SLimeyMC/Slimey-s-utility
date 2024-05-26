@@ -1,6 +1,7 @@
 package io.github.slimeymc.slimeys_utility.ship
 
 
+import io.github.slimeymc.koml.*
 import org.joml.*
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.Ship
@@ -40,8 +41,8 @@ class ShipData {
     }
 
     constructor(orientation: Quaterniondc, position: Vector3dc, dimension: String?) : this(
-        Quaterniond(orientation.x(), orientation.y(), orientation.z(), orientation.w()),
-        Vector3d(position.x(), position.y(), position.z()), dimension
+        Quaterniond(orientation),
+        Vector3d(position), dimension
     )
 
     constructor(transform: ShipTransform) : this(transform.shipToWorldRotation, transform.positionInWorld, null)
@@ -57,7 +58,7 @@ class ShipData {
             val shipCoordBoundCenter = Vector3d()
                 shipBound?.center(shipCoordBoundCenter)
             val shipCoordMassCenter: Vector3d =
-                Vector3d(ship.inertiaData.centerOfMassInShip).add(Vector3d(0.5))
+                Vector3d(ship.inertiaData.centerOfMassInShip) + Vector3d(0.5)
             val centerOfMassOffset: Vector3d = transformPosition(ship.transform, shipCoordMassCenter)
                 .sub(transformPosition(ship.transform, shipCoordBoundCenter))
             position.sub(centerOfMassOffset)
