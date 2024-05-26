@@ -4,30 +4,30 @@ issueTrackerURL = "https://github.com/ValkyrienSkies/Valkyrien-Skies-2/issues"
 license = "Apache-2.0"
 
 [[mods]]
-modId = "vs_ship_assembler"
+modId = "slimeys_utility"
 version = "${version}"
 displayName = "Better VS Ship Assembler"
-authors = ["PriestOfFern"]
+authors = ["SlimeyAr"]
 description = '''
 A Mod that adds a better Ship assembler for VS2
 '''
 logoFile = "icon.png"
 
-[[dependencies.vs_ship_assembler]]
+[[dependencies.slimeys_utility]]
 modId = "forge"
 mandatory = true
 versionRange = "[40.1.69,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.vs_ship_assembler]]
+[[dependencies.slimeys_utility]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.vs_ship_assembler]]
+[[dependencies.slimeys_utility]]
 modId = "valkyrienskies"
 mandatory = true
 versionRange = "[2.1.1-beta.1,)"

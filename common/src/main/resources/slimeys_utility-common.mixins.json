@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.github.slimeymc.slimeys_utility.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "features.GameRendererMixin",
+    "features.ShipAssemblyMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
